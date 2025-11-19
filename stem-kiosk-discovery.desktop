@@ -7,3 +7,4 @@ Icon=/usr/share/icons/Adwaita/32x32/actions/system-run.png
 Terminal=false
 Categories=Utility;
 X-GNOME-Autostart-enabled=true
+

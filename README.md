@@ -4,16 +4,53 @@ Offline-first HTML5 kiosk hub for Raspberry Pi touch displays. The home screen r
 
 ## Getting Started
 
-1. Serve the folder with any static web server:
-   ```bash
-   # With Python
-   python -m http.server 8000
+### Quick Start (Windows)
 
-   # Or using npm's serve
-   npx serve .
+1. **Start the server**:
+   ```cmd
+   python backend\server.py
    ```
-2. Open `http://localhost:8000` in Chromium (use `--kiosk --app=http://localhost:8000` for kiosk mode).
-3. Touch/mouse controls are supported out of the box.
+   
+   Or use the convenience script:
+   ```cmd
+   start-server.bat
+   ```
+
+2. **Open your browser** and go to:
+   ```
+   http://localhost:8000
+   ```
+
+3. **For Kiosk Mode** (fullscreen):
+   - Press `F11` in your browser
+   - Or: `start chrome.exe --kiosk --app=http://localhost:8000`
+
+### Quick Start (Linux/Mac/Git Bash)
+
+1. **Start the server**:
+   ```bash
+   python3 backend/server.py
+   ```
+   
+   Or use the convenience script:
+   ```bash
+   ./start-server.sh
+   ```
+
+2. **Open your browser** and go to:
+   ```
+   http://localhost:8000
+   ```
+
+### Alternative: Using Python's Built-in Server
+
+If you prefer the simple HTTP server:
+```bash
+cd frontend
+python -m http.server 8000
+```
+
+Then open `http://localhost:8000` in your browser.
 
 ## Activities
 
@@ -32,9 +69,9 @@ Each activity is modular (`scripts/modules/*`). Add new games by exporting a `mo
 
 ## Customizing
 
-- Update slideshow entries or tiles in `scripts/app.js`.
-- Adjust kiosk theming in `styles/main.css`.
-- Add content assets (audio, imagery) under `assets/` and wire them up in modules.
+- Update slideshow entries or tiles in `frontend/scripts/app.js`.
+- Adjust kiosk theming in `frontend/styles/main.css`.
+- Add content assets (audio, imagery) under `frontend/assets/` and wire them up in modules.
 - Configure Chromium kiosk scripts on Raspberry Pi:
   ```bash
   chromium-browser --kiosk --app=http://localhost:8000 --disable-pinch --overscroll-history-navigation=0
@@ -44,7 +81,7 @@ Each activity is modular (`scripts/modules/*`). Add new games by exporting a `mo
 
 Run everything in one shot (recommended):
 ```bash
-sudo ./setup_pi_kiosk.sh
+sudo ./setup/pi/setup_pi_kiosk.sh
 ```
 The script installs dependencies, writes the `systemd` service, registers the Chromium autostart entry using the current project path, drops a restart shortcut on the desktop, delays Chromium launch by 60 seconds, and keeps Chromium from opening until the kiosk server replies. Reboot after it completes.
 
@@ -54,13 +91,11 @@ Manual steps (if you prefer configuring things yourself):
    sudo apt update
    sudo apt install -y chromium-browser python3
    ```
-2. Serve the kiosk locally. Create `/home/pi/stem-kiosk/start-server.sh`:
+2. Serve the kiosk locally. The `start-server.sh` script is already in the project root:
    ```bash
-   #!/usr/bin/env bash
-   cd /home/pi/stem-kiosk
-   exec /usr/bin/python3 /home/pi/stem-kiosk/server.py
+   chmod +x /home/pi/stem-kiosk/start-server.sh
    ```
-   Make it executable: `chmod +x /home/pi/stem-kiosk/start-server.sh`.
+   This script runs `backend/server.py` which serves the `frontend/` directory.
 3. Create a systemd service for the web server (`/etc/systemd/system/stem-kiosk.service`):
    ```
    [Unit]
@@ -82,7 +117,7 @@ Manual steps (if you prefer configuring things yourself):
    [Desktop Entry]
    Type=Application
    Name=STEM Kiosk
-   Exec=/home/pi/stem-kiosk/restart_kiosk.sh
+   Exec=/home/pi/stem-kiosk/setup/restart_kiosk.sh
    X-GNOME-Autostart-enabled=true
    ```
    (On Raspberry Pi OS Lite, create a user systemd service instead and launch Chromium with `Environment=DISPLAY=:0`.)

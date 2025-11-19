@@ -47,8 +47,11 @@ fi
 echo "Syncing start-server.sh..."
 cat <<EOF > "${START_SERVER}"
 #!/usr/bin/env bash
-cd "${PROJECT_DIR}"
-exec ${PYTHON_BIN} ${PROJECT_DIR}/backend/server.py
+# Launch the kiosk Python server
+PROJECT_DIR="${PROJECT_DIR}"
+PYTHON_BIN="${PYTHON_BIN}"
+cd "\${PROJECT_DIR}"
+exec "\${PYTHON_BIN}" "\${PROJECT_DIR}/backend/server.py"
 EOF
 chmod +x "${START_SERVER}"
 chown "${PI_USER}":"${PI_USER}" "${START_SERVER}"
@@ -65,7 +68,9 @@ Type=simple
 ExecStart=${START_SERVER}
 WorkingDirectory=${PROJECT_DIR}
 Restart=always
+RestartSec=10
 User=${PI_USER}
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 [Install]
 WantedBy=multi-user.target
