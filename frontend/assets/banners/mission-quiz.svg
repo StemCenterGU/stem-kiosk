@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <defs>
+    <linearGradient id="nightSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#04111f"/>
+      <stop offset="60%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#112340"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="url(#nightSky)" />
+  <g fill="#1d4ed8" opacity="0.25">
+    <circle cx="180" cy="160" r="90" />
+    <circle cx="820" cy="220" r="140" />
+    <circle cx="620" cy="440" r="120" />
+  </g>
+  <g fill="#f8fafc" opacity="0.25">
+    <circle cx="360" cy="120" r="4" />
+    <circle cx="420" cy="80" r="3" />
+    <circle cx="480" cy="140" r="5" />
+    <circle cx="520" cy="100" r="4" />
+    <circle cx="640" cy="60" r="3" />
+    <circle cx="760" cy="120" r="4" />
+    <circle cx="700" cy="80" r="3" />
+    <circle cx="300" cy="420" r="4" />
+    <circle cx="260" cy="360" r="3" />
+  </g>
+  <g>
+    <path d="M160 360 C220 260, 340 220, 480 260 C600 300, 720 260, 820 200" fill="none" stroke="#38f8b4" stroke-width="6" stroke-dasharray="20 16" opacity="0.65"/>
+    <circle cx="160" cy="360" r="14" fill="#34d399"/>
+    <circle cx="820" cy="200" r="18" fill="#34d399"/>
+  </g>
+  <g fill="#f8fafc" font-family="Poppins,Segoe UI,Arial" font-weight="700">
+    <text font-size="44" x="140" y="200">MISSION CONTROL</text>
+    <text font-size="110" x="140" y="320">QUIZ</text>
+  </g>
+  <g font-family="Poppins,Segoe UI,Arial" fill="#cbd5f5" font-size="22" opacity="0.88">
+    <text x="150" y="370">Answer rapid-fire STEM trivia to launch your crew.</text>
+    <text x="150" y="404">Collect mission points before the timer hits zero.</text>
+  </g>
+  <g fill="none" stroke="#a855f7" stroke-width="4" opacity="0.7">
+    <rect x="620" y="160" width="220" height="280" rx="24" />
+    <line x1="640" y1="220" x2="820" y2="220" />
+    <line x1="640" y1="300" x2="820" y2="300" />
+    <line x1="640" y1="380" x2="820" y2="380" />
+  </g>
+  <g fill="#a855f7">
+    <circle cx="660" cy="220" r="10" />
+    <circle cx="720" cy="300" r="10" />
+    <circle cx="780" cy="380" r="10" />
+  </g>
+</svg>

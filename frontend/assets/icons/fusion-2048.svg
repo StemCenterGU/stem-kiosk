@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+  <defs>
+    <linearGradient id="fusionTile" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="144" height="144" rx="28" fill="url(#fusionTile)" />
+  <g fill="#f8fafc" font-family="Poppins,Segoe UI,Arial" font-weight="700">
+    <text font-size="64" x="30" y="100">2048</text>
+  </g>
+  <circle cx="80" cy="120" r="10" fill="#facc15"/>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+  <defs>
+    <linearGradient id="badge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+  </defs>
+  <circle cx="80" cy="80" r="70" fill="url(#badge)"/>
+  <polygon points="80,28 98,68 140,72 108,100 118,140 80,120 42,140 52,100 20,72 62,68" fill="#052e16"/>
+  <circle cx="80" cy="80" r="26" fill="#bbf7d0"/>
+  <path d="M80 58 L90 90 H70 Z" fill="#065f46"/>
+</svg>

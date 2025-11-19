@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Restart STEM Kiosk
+Comment=Launch the STEM Center Math Kiosk
+Exec=/home/pi/stem-kiosk/restart_kiosk.sh
+Icon=/usr/share/icons/Adwaita/32x32/actions/system-run.png
+Terminal=false
+Categories=Utility;

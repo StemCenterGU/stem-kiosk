@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+    <linearGradient id="flare" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.05)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.45)"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="#061226"/>
+  <g opacity="0.8">
+    <circle cx="160" cy="180" r="140" fill="url(#bg)" />
+    <circle cx="420" cy="120" r="90" fill="#22d3ee" opacity="0.35"/>
+    <circle cx="720" cy="220" r="140" fill="#38bdf8" opacity="0.4"/>
+    <circle cx="820" cy="380" r="190" fill="#0ea5e9" opacity="0.28"/>
+  </g>
+  <rect x="120" y="120" width="440" height="300" rx="36" fill="rgba(4,13,33,0.72)" stroke="rgba(148,163,184,0.35)" stroke-width="2"/>
+  <g font-family="Poppins,Segoe UI,Arial" font-weight="700" fill="#f8fafc" letter-spacing="4">
+    <text font-size="46" x="160" y="210">FUSION</text>
+    <text font-size="160" x="158" y="360" fill="#e0f2fe">2048</text>
+  </g>
+  <path d="M560 140 L880 140" stroke="rgba(148,163,184,0.45)" stroke-width="3" stroke-dasharray="14 16"/>
+  <rect x="560" y="160" width="260" height="12" fill="url(#flare)" opacity="0.8"/>
+  <g fill="#f8fafc" opacity="0.68">
+    <text font-family="Poppins,Segoe UI,Arial" font-size="22" x="580" y="240">Merge energy tiles & harness STEM facts.</text>
+    <text font-family="Poppins,Segoe UI,Arial" font-size="22" x="580" y="274">Drive the reactor past critical mass.</text>
+  </g>
+</svg>

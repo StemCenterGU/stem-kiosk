@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>STEM Kiosk Hub</title>
+    <link rel="stylesheet" href="styles/main.css?v=3" />
+  </head>
+  <body>
+    <div class="ambient-backdrop">
+      <div class="ambient-orb ambient-orb--one"></div>
+      <div class="ambient-orb ambient-orb--two"></div>
+      <div class="ambient-orb ambient-orb--three"></div>
+      <div class="ambient-grid"></div>
+    </div>
+    <div id="app">
+      <header class="kiosk-header">
+        <div class="brand">
+          <h1>STEM Discovery Hub</h1>
+          <p>Tap a banner or tile to jump into an activity</p>
+        </div>
+        <div class="status-controls">
+          <button id="homeButton" class="primary-btn">Home</button>
+          <button id="muteButton" class="secondary-btn" aria-pressed="false">Sound On</button>
+          <button id="restartButton" class="secondary-btn utility-btn">Restart Kiosk</button>
+          <button id="exitKioskButton" class="secondary-btn danger-btn">Exit Kiosk</button>
+        </div>
+      </header>
+
+      <section class="hero">
+        <div class="slideshow" id="slideshow"></div>
+        <div class="hero-indicators" id="heroIndicators"></div>
+      </section>
+
+      <main class="kiosk-content">
+        <section class="tile-grid" id="activityGrid"></section>
+        <section class="activity-view hidden" id="activityView">
+          <header class="activity-header">
+            <h2 id="activityTitle"></h2>
+            <button id="exitActivityButton" class="secondary-btn">Exit</button>
+          </header>
+          <div class="activity-frame" id="activityFrame"></div>
+        </section>
+      </main>
+
+      <footer class="kiosk-footer">
+        <span>Offline ready STEM kiosk - Touch friendly</span>
+        <span id="clock"></span>
+      </footer>
+    </div>
+    <script src="scripts/app.js?v=12" type="module"></script>
+  </body>
+</html>
