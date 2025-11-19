@@ -45,10 +45,10 @@ Offline-first HTML5 kiosk hub for Raspberry Pi touch displays. The home screen r
 ### Alternative: Using Python's Built-in Server
 
 If you prefer the simple HTTP server:
-```bash
+   ```bash
 cd frontend
-python -m http.server 8000
-```
+   python -m http.server 8000
+   ```
 
 Then open `http://localhost:8000` in your browser.
 
