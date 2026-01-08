@@ -1,5 +1,3 @@
-const STYLE_ID = "stem2048-style";
-
 const TILE_INSIGHTS = {
   4: [
     "Tile 4 unlocked: 4 kilometers is the average depth of Earth's oceans.",
@@ -235,179 +233,6 @@ function getRandomInsight(tileValue) {
 const GRID_SIZE = 4;
 const START_TILES = 2;
 
-function ensureStyles() {
-  if (document.getElementById(STYLE_ID)) return;
-  const style = document.createElement("style");
-  style.id = STYLE_ID;
-  style.textContent = `
-    .stem2048 {
-      display: grid;
-      grid-template-rows: auto 1fr;
-      gap: 16px;
-      padding: 12px;
-      color: #f8fafc;
-      font-family: "Nunito", "Segoe UI", sans-serif;
-    }
-    .stem2048 h3 {
-      margin: 0;
-    }
-    .stem2048__top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .stem2048__scores {
-      display: flex;
-      gap: 12px;
-    }
-    .stem2048__badge {
-      background: rgba(14, 165, 233, 0.15);
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      border-radius: 12px;
-      padding: 10px 16px;
-      text-align: center;
-      min-width: 120px;
-    }
-    .stem2048__badge span {
-      display: block;
-      font-size: 0.9rem;
-      color: #94a3b8;
-    }
-    .stem2048__badge strong {
-      font-size: 1.6rem;
-      letter-spacing: 1px;
-    }
-    .stem2048__actions {
-      display: flex;
-      gap: 12px;
-    }
-    .stem2048__btn {
-      background: #0ea5e9;
-      color: #082f49;
-      border: none;
-      border-radius: 999px;
-      font-weight: 600;
-      padding: 10px 18px;
-      font-size: 1.05rem;
-      cursor: pointer;
-      transition: transform 0.1s ease;
-    }
-    .stem2048__btn:active {
-      transform: scale(0.95);
-    }
-    .stem2048__board-wrapper {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 18px;
-      align-items: start;
-    }
-    .stem2048__board {
-      position: relative;
-      background: rgba(15, 23, 42, 0.8);
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.18);
-    }
-    .stem2048__grid {
-      display: grid;
-      gap: 12px;
-      grid-template-columns: repeat(4, 1fr);
-      width: min(520px, 80vw);
-      aspect-ratio: 1;
-      margin: 0 auto;
-      position: relative;
-    }
-    .stem2048__cell {
-      background: rgba(255, 255, 255, 0.04);
-      border-radius: 12px;
-      position: relative;
-      overflow: hidden;
-    }
-    .stem2048__tile {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      font-size: clamp(1.6rem, 2.5vw + 1rem, 3rem);
-      font-weight: 800;
-      border-radius: 12px;
-      transition: transform 0.15s ease, background 0.3s ease;
-    }
-    .stem2048__tile span {
-      display: block;
-      padding: 4px 10px;
-      text-align: center;
-    }
-    .stem2048__feed {
-      background: rgba(15, 23, 42, 0.75);
-      border-radius: 18px;
-      padding: 16px;
-      height: 100%;
-      border: 1px solid rgba(148, 163, 184, 0.15);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .stem2048__feed h4 {
-      margin: 0;
-      color: #0ea5e9;
-    }
-    .stem2048__facts {
-      display: grid;
-      gap: 12px;
-      overflow-y: auto;
-      flex: 1 1 auto;
-    }
-    .stem2048__fact {
-      background: rgba(14, 165, 233, 0.08);
-      border-radius: 12px;
-      padding: 12px 14px;
-      border-left: 4px solid rgba(14, 165, 233, 0.7);
-      box-shadow: 0 6px 12px rgba(8, 145, 178, 0.15);
-    }
-    .stem2048__fact strong {
-      display: block;
-      font-size: 1rem;
-      color: rgba(125, 211, 252, 0.95);
-    }
-    .stem2048__help {
-      font-size: 0.95rem;
-      color: #94a3b8;
-      margin: 0;
-    }
-    .stem2048__overlay {
-      position: absolute;
-      inset: 0;
-      backdrop-filter: blur(6px);
-      background: rgba(2, 6, 23, 0.75);
-      display: grid;
-      place-items: center;
-      border-radius: 18px;
-      text-align: center;
-      gap: 12px;
-    }
-    .stem2048__overlay h3 {
-      font-size: clamp(1.8rem, 2.8vw + 1rem, 2.6rem);
-      margin: 0;
-    }
-    .stem2048__overlay p {
-      max-width: 90%;
-      color: #cbd5f5;
-    }
-    @media (max-width: 900px) {
-      .stem2048__board-wrapper {
-        grid-template-columns: 1fr;
-      }
-      .stem2048__grid {
-        width: 100%;
-      }
-    }
-  `;
-  document.head.appendChild(style);
-}
-
 function createEmptyGrid() {
   return Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0));
 }
@@ -535,25 +360,31 @@ function isGameOver(board) {
 }
 
 function getTileColor(value) {
+  // Light theme tile palette - vibrant and clear
   const palette = {
-    0: "#1f2937",
-    2: "#bae6fd",
-    4: "#7dd3fc",
-    8: "#38bdf8",
-    16: "#0ea5e9",
-    32: "#0284c7",
-    64: "#0369a1",
-    128: "#0f766e",
-    256: "#059669",
-    512: "#22c55e",
-    1024: "#facc15",
-    2048: "#f97316",
+    0: "#e5e7eb",    // gray-200 - empty
+    2: "#dbeafe",    // blue-100
+    4: "#bfdbfe",    // blue-200
+    8: "#93c5fd",    // blue-300
+    16: "#60a5fa",   // blue-400
+    32: "#3b82f6",   // blue-500
+    64: "#2563eb",   // blue-600
+    128: "#7c3aed",  // purple-600
+    256: "#9333ea",  // purple-500
+    512: "#c026d3",  // fuchsia-600
+    1024: "#db2777", // pink-600
+    2048: "#059669", // emerald-600 - victory!
   };
-  return palette[value] || "#dc2626";
+  return palette[value] || "#ef4444";
+}
+
+function getTileTextColor(value) {
+  // Dark text for light tiles, white for dark tiles
+  if (value <= 8) return "#1f2937";
+  return "#ffffff";
 }
 
 export function mount(root) {
-  ensureStyles();
   root.innerHTML = `
     <section class="stem2048" aria-label="Fusion 2048 stem game">
       <div class="stem2048__top-bar">
@@ -626,6 +457,7 @@ export function mount(root) {
         const tile = document.createElement("div");
         tile.className = "stem2048__tile";
         tile.style.background = getTileColor(value);
+        tile.style.color = getTileTextColor(value);
         tile.innerHTML = `<span>${value}</span>`;
         tile.style.transform = "scale(1.05)";
         requestAnimationFrame(() => {
