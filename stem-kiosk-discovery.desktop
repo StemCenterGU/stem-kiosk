@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=STEM Discovery Kiosk
+Comment=Launch the STEM Discovery Kiosk
+Exec=/home/pi/stem-kiosk/setup/restart_kiosk.sh
+Icon=/usr/share/icons/Adwaita/32x32/actions/system-run.png
+Terminal=false
+Categories=Utility;
+X-GNOME-Autostart-enabled=true
+
