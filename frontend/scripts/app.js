@@ -6,12 +6,12 @@ const activities = [
   },
   {
     id: "missionQuiz",
-    title: "Mission Control Quiz",
+    title: "Mission Quiz",
     module: () => import("./modules/missionQuiz.js"),
   },
   {
     id: "teamsGuide",
-    title: "MS Teams Guide",
+    title: "Teams Guide",
     module: () => import("./modules/pdfViewer.js"),
     pdfUrl: "ms team instructions.pdf",
   },
@@ -21,11 +21,26 @@ const state = {
   mountedActivity: null,
 };
 
+// Theme management
+function initTheme() {
+  const saved = localStorage.getItem("kiosk-theme") || "dark";
+  document.documentElement.setAttribute("data-theme", saved);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute("data-theme");
+  const next = current === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", next);
+  localStorage.setItem("kiosk-theme", next);
+}
+
+// Audio Manager
 class AudioManager {
   constructor() {
     this.ctx = null;
     this.enabled = true;
   }
+
   toggle() {
     this.enabled = !this.enabled;
     if (!this.enabled && this.ctx) {
@@ -34,6 +49,7 @@ class AudioManager {
     }
     return this.enabled;
   }
+
   async initContext() {
     if (!this.enabled) return;
     if (!this.ctx) {
@@ -48,17 +64,18 @@ class AudioManager {
       }
     }
   }
+
   async playTap() {
     if (!this.enabled) return;
     await this.initContext();
     if (!this.ctx) return;
-    const duration = 0.12;
+    const duration = 0.1;
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
-    osc.type = "triangle";
-    osc.frequency.setValueAtTime(520, this.ctx.currentTime);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(600, this.ctx.currentTime);
     gain.gain.setValueAtTime(0.001, this.ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.3, this.ctx.currentTime + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.2, this.ctx.currentTime + 0.01);
     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
     osc.connect(gain).connect(this.ctx.destination);
     osc.start();
@@ -76,13 +93,15 @@ const activityTitle = document.getElementById("activityTitle");
 const backBtn = document.getElementById("backBtn");
 const exitActivityButton = document.getElementById("exitActivityButton");
 const muteButton = document.getElementById("muteButton");
+const themeToggle = document.getElementById("themeToggle");
 const clockEl = document.getElementById("clock");
 const screensaverEl = document.getElementById("screensaver");
-const screensaverFrame = document.getElementById("screensaverFrame");
+const screensaverLayer1 = document.getElementById("screensaverLayer1");
+const screensaverLayer2 = document.getElementById("screensaverLayer2");
 const exitOverlay = document.getElementById("exitOverlay");
 const exitCancel = document.getElementById("exitCancel");
 
-// Screensaver configuration
+// Screensaver config
 const SCREENSAVER_DELAY_MS = 3 * 60 * 1000;
 const SCREENSAVER_ADVANCE_MS = 8000;
 
@@ -93,21 +112,16 @@ const screensaverState = {
   index: 0,
   images: [],
   loading: false,
+  currentLayer: 1, // Toggle between 1 and 2 for crossfade
 };
 
-// Activity panel click handlers
-function setupActivityPanels() {
-  console.log("Setting up activity panels...");
-  const panels = document.querySelectorAll("[data-activity-id]");
-  console.log("Found panels:", panels.length);
-  panels.forEach((panel) => {
-    const activityId = panel.dataset.activityId;
-    console.log("Adding click handler for:", activityId);
-    panel.addEventListener("click", () => {
-      console.log("Panel clicked:", activityId);
-      openActivity(activityId);
-    });
-    panel.addEventListener("keydown", (evt) => {
+// Activity cards
+function setupActivityCards() {
+  const cards = document.querySelectorAll("[data-activity-id]");
+  cards.forEach((card) => {
+    const activityId = card.dataset.activityId;
+    card.addEventListener("click", () => openActivity(activityId));
+    card.addEventListener("keydown", (evt) => {
       if (evt.key === "Enter" || evt.key === " ") {
         evt.preventDefault();
         openActivity(activityId);
@@ -118,7 +132,7 @@ function setupActivityPanels() {
 
 async function openActivity(activityId) {
   await audioManager.playTap();
-  const selected = activities.find((activity) => activity.id === activityId);
+  const selected = activities.find((a) => a.id === activityId);
   if (!selected) return;
 
   activityTitle.textContent = selected.title;
@@ -130,7 +144,6 @@ async function openActivity(activityId) {
     if (state.mountedActivity && typeof state.mountedActivity.destroy === "function") {
       state.mountedActivity.destroy();
     }
-    // Handle PDF activities
     if (selected.pdfUrl) {
       state.mountedActivity = module.mount(activityFrame);
       await state.mountedActivity.loadPDF(selected.pdfUrl);
@@ -138,10 +151,9 @@ async function openActivity(activityId) {
       state.mountedActivity = module.mount(activityFrame);
     }
   } catch (err) {
-    console.error("Failed to load module", err);
-    activityFrame.innerHTML = `<div class="activity-error">
-      <h3>We hit a snag</h3>
-      <p>Something went wrong loading this activity. Please try again.</p>
+    console.error("Failed to load activity", err);
+    activityFrame.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:1.25rem;">
+      <p>Failed to load. Please try again.</p>
     </div>`;
   }
 }
@@ -158,23 +170,31 @@ function closeActivity() {
 }
 
 function initClock() {
-  function updateClock() {
+  function update() {
     const now = new Date();
-    const formatted = now.toLocaleString(undefined, {
+    clockEl.textContent = now.toLocaleTimeString(undefined, {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
     });
-    clockEl.textContent = formatted;
   }
-  updateClock();
-  setInterval(updateClock, 30 * 1000);
+  update();
+  setInterval(update, 30000);
 }
 
-function registerControls() {
+function setupControls() {
   backBtn.addEventListener("click", closeActivity);
   exitActivityButton.addEventListener("click", closeActivity);
 
+  // Theme toggle
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      toggleTheme();
+      audioManager.playTap();
+    });
+  }
+
+  // Mute button
   muteButton.addEventListener("click", async () => {
     const enabled = audioManager.toggle();
     const svg = muteButton.querySelector("svg");
@@ -184,7 +204,6 @@ function registerControls() {
     } else {
       svg.innerHTML = `<path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>`;
     }
-    muteButton.setAttribute("aria-pressed", (!enabled).toString());
   });
 
   // Exit dialog
@@ -193,13 +212,11 @@ function registerControls() {
     audioManager.playTap();
   });
 
-  // Keyboard shortcut to exit kiosk
   document.addEventListener("keydown", (evt) => {
     if (evt.ctrlKey && evt.shiftKey && evt.key === "Q") {
       evt.preventDefault();
       exitOverlay.classList.remove("hidden");
     }
-    // Also allow closing with Escape
     if (evt.key === "Escape" && !exitOverlay.classList.contains("hidden")) {
       exitOverlay.classList.add("hidden");
     }
@@ -208,22 +225,19 @@ function registerControls() {
   setupScreensaver();
 }
 
-// Screensaver functions
+// Screensaver
 function setupScreensaver() {
-  const activityEvents = ["mousemove", "mousedown", "keydown", "touchstart", "wheel"];
-  activityEvents.forEach((evt) => {
-    document.addEventListener(evt, handleUserActivity, { passive: evt === "touchstart" || evt === "wheel" });
+  const events = ["mousemove", "mousedown", "keydown", "touchstart", "wheel"];
+  events.forEach((evt) => {
+    document.addEventListener(evt, handleUserActivity, { passive: true });
   });
-
   screensaverEl.addEventListener("click", handleUserActivity);
   resetScreensaverTimer();
 }
 
 function resetScreensaverTimer() {
-  if (screensaverState.timerId) {
-    clearTimeout(screensaverState.timerId);
-  }
-  screensaverState.timerId = window.setTimeout(activateScreensaver, SCREENSAVER_DELAY_MS);
+  if (screensaverState.timerId) clearTimeout(screensaverState.timerId);
+  screensaverState.timerId = setTimeout(activateScreensaver, SCREENSAVER_DELAY_MS);
 }
 
 async function activateScreensaver() {
@@ -238,7 +252,7 @@ async function activateScreensaver() {
   screensaverState.index = 0;
   updateScreensaverImage();
   screensaverEl.classList.remove("hidden");
-  screensaverState.intervalId = window.setInterval(() => {
+  screensaverState.intervalId = setInterval(() => {
     screensaverState.index = (screensaverState.index + 1) % screensaverState.images.length;
     updateScreensaverImage();
   }, SCREENSAVER_ADVANCE_MS);
@@ -252,12 +266,15 @@ function deactivateScreensaver() {
     screensaverState.intervalId = null;
   }
   screensaverEl.classList.add("hidden");
+
+  // Clean up both layers
+  screensaverLayer1.classList.remove("active", "animate", "animate-alt");
+  screensaverLayer2.classList.remove("active", "animate", "animate-alt");
+  screensaverState.currentLayer = 1;
 }
 
 function handleUserActivity() {
-  if (screensaverState.active) {
-    deactivateScreensaver();
-  }
+  if (screensaverState.active) deactivateScreensaver();
   resetScreensaverTimer();
 }
 
@@ -267,9 +284,9 @@ async function loadScreensaverImages() {
   }
   screensaverState.loading = true;
   try {
-    const response = await fetch("/__screensaver", { cache: "no-store" });
-    if (!response.ok) return [];
-    const data = await response.json();
+    const res = await fetch("/__screensaver", { cache: "no-store" });
+    if (!res.ok) return [];
+    const data = await res.json();
     screensaverState.images = Array.isArray(data.images) ? data.images : [];
   } catch (err) {
     console.error("Failed to load screensaver images", err);
@@ -280,20 +297,39 @@ async function loadScreensaverImages() {
 }
 
 function updateScreensaverImage() {
-  if (!screensaverFrame || !screensaverState.images.length) return;
+  if (!screensaverState.images.length) return;
   const src = screensaverState.images[screensaverState.index];
-  screensaverFrame.style.backgroundImage = `url(${src})`;
+
+  // Determine which layer to activate (crossfade)
+  const activeLayer = screensaverState.currentLayer === 1 ? screensaverLayer1 : screensaverLayer2;
+  const inactiveLayer = screensaverState.currentLayer === 1 ? screensaverLayer2 : screensaverLayer1;
+
+  // Set the new image on the inactive layer
+  activeLayer.style.backgroundImage = `url(${src})`;
+
+  // Remove animations from inactive layer
+  inactiveLayer.classList.remove("active", "animate", "animate-alt");
+
+  // Activate new layer with Ken Burns animation
+  activeLayer.classList.add("active");
+  activeLayer.classList.remove("animate", "animate-alt");
+
+  // Use alternate animation direction based on image index for variety
+  void activeLayer.offsetWidth; // Force reflow to restart animation
+  activeLayer.classList.add(screensaverState.index % 2 === 0 ? "animate" : "animate-alt");
+
+  // Toggle layer for next image
+  screensaverState.currentLayer = screensaverState.currentLayer === 1 ? 2 : 1;
 }
 
+// Init
 function init() {
-  console.log("Init called, readyState:", document.readyState);
-  setupActivityPanels();
+  initTheme();
+  setupActivityCards();
   initClock();
-  registerControls();
-  console.log("Init complete");
+  setupControls();
 }
 
-console.log("App.js loaded, readyState:", document.readyState);
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", init);
 } else {
