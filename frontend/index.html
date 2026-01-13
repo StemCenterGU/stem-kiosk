@@ -14,6 +14,10 @@
     <!-- Activity Selection -->
     <section class="home" id="homeView">
 
+      <header class="home__header">
+        <h1 class="home__title" data-text="STEM Center Fun Kiosk">STEM Center Fun Kiosk</h1>
+      </header>
+
       <div class="activities">
         <button class="activity-card" data-activity-id="stem2048" tabindex="0">
           <div class="activity-card__icon">
@@ -46,6 +50,25 @@
           <div class="activity-card__content">
             <h2 class="activity-card__title">Mission Quiz</h2>
             <p class="activity-card__desc">Test your STEM knowledge</p>
+          </div>
+          <div class="activity-card__arrow">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </div>
+        </button>
+
+        <button class="activity-card" data-activity-id="stemTicTacToe" tabindex="0">
+          <div class="activity-card__icon activity-card__icon--orange">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/>
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M12 2v4M12 18v4M2 12h4M18 12h4"/>
+            </svg>
+          </div>
+          <div class="activity-card__content">
+            <h2 class="activity-card__title">Atom vs Electron</h2>
+            <p class="activity-card__desc">Classic Tic Tac Toe with STEM theme</p>
           </div>
           <div class="activity-card__arrow">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -90,6 +113,14 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M11 5L6 9H2v6h4l5 4V5z"/>
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+        </button>
+        <button id="refreshButton" class="icon-btn" aria-label="Refresh page">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+            <path d="M21 3v5h-5"/>
+            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+            <path d="M3 21v-5h5"/>
           </svg>
         </button>
         <time id="clock" class="clock">--:--</time>

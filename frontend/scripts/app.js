@@ -10,6 +10,11 @@ const activities = [
     module: () => import("./modules/missionQuiz.js"),
   },
   {
+    id: "stemTicTacToe",
+    title: "Atom vs Electron",
+    module: () => import("./modules/stemTicTacToe.js"),
+  },
+  {
     id: "teamsGuide",
     title: "Teams Guide",
     module: () => import("./modules/pdfViewer.js"),
@@ -94,6 +99,7 @@ const backBtn = document.getElementById("backBtn");
 const exitActivityButton = document.getElementById("exitActivityButton");
 const muteButton = document.getElementById("muteButton");
 const themeToggle = document.getElementById("themeToggle");
+const refreshButton = document.getElementById("refreshButton");
 const clockEl = document.getElementById("clock");
 const screensaverEl = document.getElementById("screensaver");
 const screensaverLayer1 = document.getElementById("screensaverLayer1");
@@ -205,6 +211,24 @@ function setupControls() {
       svg.innerHTML = `<path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>`;
     }
   });
+
+  // Refresh button
+  if (refreshButton) {
+    refreshButton.addEventListener("click", async () => {
+      await audioManager.playTap();
+      // Add a slight delay for the tap sound, then do a hard reload with cache busting
+      setTimeout(() => {
+        // Force hard reload by clearing cache and reloading
+        if ('caches' in window) {
+          caches.keys().then(names => {
+            names.forEach(name => caches.delete(name));
+          });
+        }
+        // Use location.reload with forceReload flag
+        window.location.reload(true);
+      }, 100);
+    });
+  }
 
   // Exit dialog
   exitCancel.addEventListener("click", () => {

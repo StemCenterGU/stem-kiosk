@@ -95,8 +95,59 @@ button {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 24px;
+  padding: 40px 60px;
   min-height: 0;
+}
+
+.home__header {
+  text-align: center;
+  margin-bottom: 50px;
+  flex-shrink: 0;
+  padding: 30px 0;
+}
+
+.home__title {
+  font-size: 5rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  position: relative;
+  display: inline-block;
+}
+
+/* Better visibility in dark mode */
+[data-theme="dark"] .home__title {
+  color: #93c5fd;
+  background: linear-gradient(135deg, #93c5fd 0%, #c4b5fd 50%, #f9a8d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% auto;
+  animation: gradientShift 3s ease infinite;
+  filter: drop-shadow(0 0 30px rgba(147, 197, 253, 0.5));
+  text-shadow: 0 0 40px rgba(147, 197, 253, 0.3);
+}
+
+/* Lighter colors for light mode */
+[data-theme="light"] .home__title {
+  color: #3b82f6;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% auto;
+  animation: gradientShift 3s ease infinite;
+  filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.2));
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
 }
 
 .activities {
@@ -104,8 +155,8 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 20px;
-  max-width: 700px;
+  gap: 32px;
+  max-width: 900px;
   width: 100%;
   margin: 0 auto;
 }
@@ -116,14 +167,14 @@ button {
 .activity-card {
   display: flex;
   align-items: center;
-  gap: 24px;
-  padding: 28px 32px;
+  gap: 32px;
+  padding: 40px 48px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   text-align: left;
   transition: var(--transition);
-  min-height: 120px;
+  min-height: 180px;
 }
 
 .activity-card:hover,
@@ -139,8 +190,8 @@ button {
 }
 
 .activity-card__icon {
-  width: 64px;
-  height: 64px;
+  width: 100px;
+  height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -151,8 +202,8 @@ button {
 }
 
 .activity-card__icon svg {
-  width: 36px;
-  height: 36px;
+  width: 56px;
+  height: 56px;
 }
 
 .activity-card__icon--green {
@@ -165,19 +216,24 @@ button {
   color: var(--purple);
 }
 
+.activity-card__icon--orange {
+  background: rgba(249, 115, 22, 0.15);
+  color: #f97316;
+}
+
 .activity-card__content {
   flex: 1;
   min-width: 0;
 }
 
 .activity-card__title {
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 12px;
 }
 
 .activity-card__desc {
-  font-size: 1.1rem;
+  font-size: 1.75rem;
   color: var(--text-muted);
 }
 
@@ -198,13 +254,13 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
-  padding: 20px;
+  gap: 32px;
+  padding: 32px 40px;
 }
 
 .icon-btn {
-  width: 56px;
-  height: 56px;
+  width: 80px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -215,13 +271,18 @@ button {
   transition: var(--transition);
 }
 
+.icon-btn svg {
+  width: 32px;
+  height: 32px;
+}
+
 .icon-btn:hover {
   background: var(--surface-hover);
   color: var(--text);
 }
 
 .clock {
-  font-size: 1.25rem;
+  font-size: 2rem;
   font-weight: 500;
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
@@ -252,8 +313,8 @@ button {
 .activity-footer {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px 24px;
+  gap: 24px;
+  padding: 24px 40px;
   border-top: 1px solid var(--border);
   background: var(--surface);
   flex-shrink: 0;
@@ -262,14 +323,19 @@ button {
 .back-btn {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 16px 28px;
+  gap: 16px;
+  padding: 24px 40px;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  font-size: 1.1rem;
+  font-size: 1.75rem;
   font-weight: 500;
   transition: var(--transition);
+}
+
+.back-btn svg {
+  width: 28px;
+  height: 28px;
 }
 
 .back-btn:hover {
@@ -278,18 +344,18 @@ button {
 
 .activity-title {
   flex: 1;
-  font-size: 1.25rem;
+  font-size: 2rem;
   font-weight: 600;
   text-align: center;
 }
 
 .exit-btn {
-  padding: 16px 28px;
+  padding: 24px 40px;
   background: transparent;
   border: 2px solid var(--red);
   border-radius: var(--radius-sm);
   color: var(--red);
-  font-size: 1.1rem;
+  font-size: 1.75rem;
   font-weight: 600;
   transition: var(--transition);
 }
@@ -354,14 +420,14 @@ button {
 
 .screensaver__hint {
   position: absolute;
-  bottom: 60px;
+  bottom: 80px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 20px 40px;
+  padding: 32px 60px;
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(10px);
   border-radius: 100px;
-  font-size: 1.25rem;
+  font-size: 2rem;
   font-weight: 500;
   color: white;
   animation: pulse 2s ease-in-out infinite;
@@ -390,21 +456,21 @@ button {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 40px;
+  padding: 60px;
   text-align: center;
-  max-width: 400px;
+  max-width: 600px;
 }
 
 .dialog__title {
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   font-weight: 600;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
 }
 
 .dialog__text {
   color: var(--text-muted);
-  font-size: 1.1rem;
-  margin-bottom: 24px;
+  font-size: 1.75rem;
+  margin-bottom: 32px;
 }
 
 .dialog__keys {
@@ -416,26 +482,26 @@ button {
 }
 
 .dialog__keys kbd {
-  padding: 12px 20px;
+  padding: 20px 32px;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 8px;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-weight: 600;
 }
 
 .dialog__keys span {
   color: var(--text-muted);
-  font-size: 1.25rem;
+  font-size: 2rem;
 }
 
 .dialog__cancel {
-  padding: 16px 40px;
+  padding: 24px 60px;
   background: var(--surface-hover);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  font-size: 1.1rem;
+  font-size: 1.75rem;
   font-weight: 500;
   transition: var(--transition);
 }
@@ -451,8 +517,8 @@ button {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 24px;
-  padding-top: 40px;
+  padding: 40px 60px;
+  padding-top: 50px;
   color: var(--text);
   overflow-y: auto;
 }
@@ -462,28 +528,31 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
   flex-wrap: wrap;
-  margin-bottom: 24px;
-  padding: 16px 20px;
+  margin-bottom: 32px;
+  padding: 24px 32px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   flex-shrink: 0;
-  max-width: 540px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: -60px;
+  margin-right: -60px;
+  padding-left: 60px;
+  padding-right: 60px;
+  width: calc(100% + 120px);
+  max-width: none;
 }
 
 .stem2048__top-bar h3 {
-  font-size: 1.25rem;
+  font-size: 2rem;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .stem2048__help {
   color: var(--text-muted);
-  font-size: 0.95rem;
+  font-size: 1.5rem;
 }
 
 .stem2048__scores {
@@ -495,23 +564,23 @@ button {
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 12px 20px;
+  padding: 20px 32px;
   text-align: center;
-  min-width: 90px;
+  min-width: 140px;
 }
 
 .stem2048__badge span {
   display: block;
-  font-size: 0.7rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .stem2048__badge strong {
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   font-weight: 700;
 }
 
@@ -521,12 +590,12 @@ button {
 }
 
 .stem2048__btn {
-  padding: 14px 28px;
+  padding: 20px 40px;
   background: var(--accent);
   border: none;
   border-radius: var(--radius-sm);
   color: white;
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-weight: 600;
   transition: var(--transition);
 }
@@ -539,7 +608,7 @@ button {
 .stem2048__board-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 32px;
   flex: 1;
   min-height: 0;
 }
@@ -550,16 +619,16 @@ button {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 16px;
+  padding: 24px;
   margin: 0 auto;
   width: 100%;
-  max-width: 500px;
+  max-width: 700px;
 }
 
 .stem2048__grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  gap: 16px;
   aspect-ratio: 1;
 }
 
@@ -575,7 +644,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-size: clamp(2rem, 5vw, 4rem);
   font-weight: 700;
   border-radius: var(--radius-sm);
   transition: transform 0.1s ease;
@@ -586,47 +655,50 @@ button {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 20px;
+  padding: 32px;
   flex-shrink: 0;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .stem2048__feed h4 {
-  font-size: 0.85rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
 }
 
 .stem2048__facts {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-height: 180px;
+  gap: 16px;
+  max-height: 300px;
   overflow-y: auto;
 }
 
 .stem2048__fact {
   background: var(--bg);
   border-radius: var(--radius-sm);
-  padding: 14px 16px;
-  border-left: 4px solid var(--accent);
+  padding: 20px 24px;
+  border-left: 6px solid var(--accent);
 }
 
 .stem2048__fact strong {
   display: inline-block;
-  font-size: 0.8rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: var(--accent);
-  margin-right: 8px;
+  margin-right: 12px;
   text-transform: uppercase;
 }
 
 .stem2048__fact span {
-  font-size: 1rem;
+  font-size: 1.5rem;
   color: var(--text-muted);
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .stem2048__overlay {
@@ -647,14 +719,14 @@ button {
 }
 
 .stem2048__overlay h3 {
-  font-size: 2rem;
-  margin-bottom: 12px;
+  font-size: 3.5rem;
+  margin-bottom: 20px;
 }
 
 .stem2048__overlay p {
   color: var(--text-muted);
-  font-size: 1.1rem;
-  margin-bottom: 24px;
+  font-size: 2rem;
+  margin-bottom: 40px;
 }
 
 /* ============================================
@@ -664,11 +736,11 @@ button {
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 24px;
-  padding-top: 32px;
+  padding: 40px 60px;
+  padding-top: 50px;
   color: var(--text);
   overflow: hidden;
-  max-width: 900px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
@@ -683,33 +755,40 @@ button {
 /* HUD - compact top bar */
 .mission-quiz__hud {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   gap: 16px;
-  flex-wrap: wrap;
-  margin-bottom: 24px;
+  flex-wrap: nowrap;
+  margin-bottom: 32px;
   flex-shrink: 0;
+  margin-left: -60px;
+  margin-right: -60px;
+  padding-left: 60px;
+  padding-right: 60px;
+  width: calc(100% + 120px);
 }
 
 .mission-quiz__hud-item {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 10px 20px;
+  padding: 16px 24px;
   text-align: center;
+  flex: 1;
+  min-width: 0;
 }
 
 .mission-quiz__hud-item span {
   display: block;
-  font-size: 0.65rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  margin-bottom: 2px;
+  margin-bottom: 6px;
 }
 
 .mission-quiz__hud-item strong {
-  font-size: 1.1rem;
+  font-size: 2rem;
   font-weight: 700;
 }
 
@@ -728,19 +807,19 @@ button {
 }
 
 .mission-quiz__category {
-  padding: 6px 14px;
+  padding: 12px 24px;
   background: rgba(59, 130, 246, 0.15);
   border-radius: 100px;
-  font-size: 0.75rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: var(--accent);
   text-transform: uppercase;
 }
 
 .mission-quiz__difficulty {
-  padding: 6px 14px;
+  padding: 12px 24px;
   border-radius: 100px;
-  font-size: 0.75rem;
+  font-size: 1.2rem;
   font-weight: 600;
   text-transform: uppercase;
 }
@@ -762,39 +841,39 @@ button {
 
 /* Big centered question */
 .mission-quiz__prompt {
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   font-weight: 600;
   line-height: 1.4;
   text-align: center;
-  padding: 28px 24px;
+  padding: 40px 32px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  margin-bottom: 24px;
+  margin-bottom: 32px;
 }
 
 /* Kahoot-style colorful answer grid */
 .mission-quiz__options {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 24px;
   flex: 1;
-  max-height: 400px;
+  max-height: 600px;
 }
 
 .mission-quiz__option {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 20px;
+  padding: 40px 32px;
   border: none;
   border-radius: var(--radius);
   color: white;
-  font-size: 1.15rem;
+  font-size: 2rem;
   font-weight: 600;
   text-align: center;
   transition: var(--transition);
-  min-height: 80px;
+  min-height: 140px;
 }
 
 /* Kahoot colors */
@@ -885,14 +964,14 @@ button {
 }
 
 .mission-quiz__overlay h3 {
-  font-size: 2rem;
-  margin-bottom: 12px;
+  font-size: 3.5rem;
+  margin-bottom: 20px;
 }
 
 .mission-quiz__overlay p {
   color: var(--text-muted);
-  font-size: 1.1rem;
-  margin-bottom: 24px;
+  font-size: 2rem;
+  margin-bottom: 40px;
 }
 
 /* ============================================
@@ -909,28 +988,28 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  padding: 16px;
+  gap: 24px;
+  padding: 24px 40px;
   border-bottom: 1px solid var(--border);
 }
 
 .pdf-page-info {
-  padding: 12px 24px;
+  padding: 20px 40px;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  font-size: 1rem;
+  font-size: 1.75rem;
   font-weight: 600;
 }
 
 .pdf-btn {
-  min-height: 52px;
-  padding: 0 24px;
+  min-height: 80px;
+  padding: 0 40px;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text);
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-weight: 600;
   transition: var(--transition);
 }
@@ -955,7 +1034,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 40px;
   overflow: auto;
   background: var(--bg);
 }
@@ -1036,6 +1115,313 @@ button {
   .stem2048__board {
     max-width: 450px;
   }
+}
+
+/* ============================================
+   TIC TAC TOE - STEM THEMED
+   ============================================ */
+.stem-tic-tac-toe {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 60px;
+  padding-top: 50px;
+  color: var(--text);
+  overflow-y: auto;
+}
+
+.stem-tic-tac-toe__mode-selection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 40px;
+}
+
+.stem-tic-tac-toe__mode-title {
+  font-size: 3rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.stem-tic-tac-toe__mode-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 32px;
+  max-width: 800px;
+  width: 100%;
+}
+
+.stem-tic-tac-toe__mode-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 60px 40px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.stem-tic-tac-toe__mode-btn:hover {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+  transform: scale(1.02);
+}
+
+.stem-tic-tac-toe__mode-btn:active {
+  transform: scale(0.98);
+}
+
+.stem-tic-tac-toe__mode-icon {
+  font-size: 5rem;
+  line-height: 1;
+}
+
+.stem-tic-tac-toe__mode-btn h3 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.stem-tic-tac-toe__mode-btn p {
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.stem-tic-tac-toe__top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+  padding: 24px 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  flex-shrink: 0;
+  margin-left: -60px;
+  margin-right: -60px;
+  padding-left: 60px;
+  padding-right: 60px;
+  width: calc(100% + 120px);
+  max-width: none;
+}
+
+.stem-tic-tac-toe__scores {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+}
+
+.stem-tic-tac-toe__badge {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 20px 32px;
+  text-align: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.stem-tic-tac-toe__badge span {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+
+.stem-tic-tac-toe__badge strong {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.stem-tic-tac-toe__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.stem-tic-tac-toe__btn {
+  padding: 20px 40px;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 600;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.stem-tic-tac-toe__btn:hover {
+  background: var(--accent-hover);
+}
+
+.stem-tic-tac-toe__board-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  flex: 1;
+  min-height: 0;
+  align-items: center;
+}
+
+.stem-tic-tac-toe__board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  position: relative;
+}
+
+.stem-tic-tac-toe__cell {
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  min-height: 0;
+}
+
+.stem-tic-tac-toe__cell:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--accent);
+  transform: scale(1.02);
+}
+
+.stem-tic-tac-toe__cell:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.stem-tic-tac-toe__mark {
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: 1;
+  transition: var(--transition);
+}
+
+.stem-tic-tac-toe__mark--atom {
+  color: #3b82f6;
+  animation: atomPulse 0.3s ease;
+}
+
+.stem-tic-tac-toe__mark--electron {
+  color: #f97316;
+  animation: electronPulse 0.3s ease;
+}
+
+@keyframes atomPulse {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes electronPulse {
+  0% { transform: scale(0) rotate(0deg); }
+  50% { transform: scale(1.1) rotate(180deg); }
+  100% { transform: scale(1) rotate(360deg); }
+}
+
+.stem-tic-tac-toe__status {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 32px;
+  text-align: center;
+  width: 100%;
+  max-width: 700px;
+}
+
+.stem-tic-tac-toe__current-player {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  font-size: 1.5rem;
+}
+
+.stem-tic-tac-toe__current-player span {
+  color: var(--text-muted);
+}
+
+.stem-tic-tac-toe__player-mark {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.stem-tic-tac-toe__fact {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  width: 100%;
+  max-width: 700px;
+}
+
+.stem-tic-tac-toe__fact h4 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 20px;
+}
+
+.stem-tic-tac-toe__fact p {
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.stem-tic-tac-toe__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(9, 9, 11, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+  text-align: center;
+  padding: 60px;
+  z-index: 100;
+  margin: 24px;
+}
+
+[data-theme="light"] .stem-tic-tac-toe__overlay {
+  background: rgba(244, 244, 245, 0.95);
+}
+
+.stem-tic-tac-toe__overlay h3 {
+  font-size: 3.5rem;
+  margin-bottom: 20px;
+}
+
+.stem-tic-tac-toe__overlay p {
+  color: var(--text-muted);
+  font-size: 2rem;
+  margin-bottom: 40px;
 }
 
 /* ============================================

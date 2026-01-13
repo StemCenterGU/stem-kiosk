@@ -26,6 +26,15 @@ class KioskRequestHandler(http.server.SimpleHTTPRequestHandler):
         syslog = f"{self.log_date_time_string()} - {self.address_string()} - {format % args}"
         print(syslog)
 
+    def end_headers(self):
+        # Add cache-control headers for HTML, JS, and CSS files to prevent aggressive caching
+        parsed = urlparse(self.path)
+        if parsed.path.endswith('.html') or parsed.path.endswith('.js') or parsed.path.endswith('.css'):
+            self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+            self.send_header("Pragma", "no-cache")
+            self.send_header("Expires", "0")
+        super().end_headers()
+
     def do_GET(self):  # noqa: N802
         parsed = urlparse(self.path)
         if parsed.path == "/__screensaver":
@@ -126,9 +135,9 @@ def start_server_on_port(port):
             "10048" in error_msg
         )
         if is_port_in_use:
-            print(f"✗ Port {port} is already in use, skipping...")
+            print(f"[SKIP] Port {port} is already in use, skipping...")
         else:
-            print(f"✗ Error starting server on port {port}: {e}")
+            print(f"[ERROR] Error starting server on port {port}: {e}")
     except KeyboardInterrupt:
         print(f"Shutting down server on port {port}...")
 
@@ -151,7 +160,7 @@ def main():
         with ThreadingTCPServer(address, KioskRequestHandler) as httpd:
             httpd.allow_reuse_address = True
             print(f"Serving kiosk content from {BASE_DIR}")
-            print(f"✓ Server started on port {port} - http://localhost:{port}")
+            print(f"[OK] Server started on port {port} - http://localhost:{port}")
             try:
                 httpd.serve_forever()
             except KeyboardInterrupt:

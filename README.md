@@ -2,6 +2,33 @@
 
 Offline-first HTML5 kiosk hub for Raspberry Pi touch displays. The home screen rotates through banner slides; tapping a banner or tile launches an activity inside the kiosk shell. Everything runs locally in Chromium kiosk mode.
 
+## Connecting to the Server
+
+To connect to the STEM Kiosk server (172.16.74.22):
+
+**Using the connection script (Windows with WSL):**
+```bash
+# Using batch file
+.\connect-server.bat
+
+# Using bash script (in Git Bash or WSL)
+./connect-server.sh
+
+# Execute commands remotely
+.\connect-server.bat "ls -la"
+```
+
+**Manual SSH connection:**
+```bash
+# Using WSL with sshpass
+wsl sshpass -p 'pi@314159' ssh stemcenter@172.16.74.22
+
+# Or using regular SSH (password: pi@314159)
+ssh stemcenter@172.16.74.22
+```
+
+The server is configured in your SSH config at `~/.ssh/config` as `172.16.74.22`.
+
 ## Getting Started
 
 1. Serve the folder with any static web server:
