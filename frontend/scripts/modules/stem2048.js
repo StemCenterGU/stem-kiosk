@@ -1,3 +1,5 @@
+import { saveScore, updateStatistics } from '../storage.js';
+
 const TILE_INSIGHTS = {
   4: [
     "Tile 4 unlocked: 4 kilometers is the average depth of Earth's oceans.",
@@ -442,6 +444,8 @@ export function mount(root) {
   let board = createEmptyGrid();
   let score = 0;
   let bestScore = Number(localStorage.getItem("stem2048-best") || 0);
+  let gameStartTime = Date.now();
+  let playTime = 0;
   let touchStart = null;
   const factLog = [];
 
@@ -504,8 +508,21 @@ export function mount(root) {
   }
 
   function startGame() {
+    // Save previous game stats if score > 0
+    if (score > 0) {
+      playTime = Math.floor((Date.now() - gameStartTime) / 1000);
+      saveScore('stem2048', score);
+      updateStatistics('stem2048', {
+        score,
+        playTime,
+        result: isGameWon(board) ? 'win' : 'loss'
+      });
+    }
+    
     board = createEmptyGrid();
     score = 0;
+    gameStartTime = Date.now();
+    playTime = 0;
     refreshFacts();
     for (let i = 0; i < START_TILES; i++) {
       addRandomTile(board);

@@ -1,4 +1,5 @@
 import { MassiveQuestionLoader } from './massiveQuestionLoader.js';
+import { saveScore, updateStatistics } from '../storage.js';
 
 const QUESTIONS_PER_MISSION = 10;
 
@@ -758,6 +759,18 @@ export function mount(root) {
     ticking = null;
     overlay.classList.add("active");
     summaryEl.textContent = `You scored ${score} mission points across ${pool.length} stages.`;
+    
+    // Save score and statistics
+    playTime = Math.floor((Date.now() - gameStartTime) / 1000);
+    if (score > 0) {
+      saveScore('missionQuiz', score);
+      updateStatistics('missionQuiz', {
+        score,
+        playTime,
+        result: score > 0 ? 'win' : 'loss'
+      });
+    }
+    
     if (!best || score > best) {
       best = score;
       localStorage.setItem("mission-quiz-best", best);
@@ -879,6 +892,8 @@ export function mount(root) {
     index = 0;
     score = 0;
     timer = 30;
+    gameStartTime = Date.now();
+    playTime = 0;
     feedbackEl.textContent = "";
     logEl.innerHTML = "";
     overlay.classList.remove("active");

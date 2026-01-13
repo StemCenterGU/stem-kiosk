@@ -1,6 +1,8 @@
 // STEM-themed Tic Tac Toe
 // X = Atom, O = Electron
 
+import { saveScore, updateStatistics } from '../storage.js';
+
 const STEM_FACTS = [
   "Atoms are the basic building blocks of matter, consisting of protons, neutrons, and electrons.",
   "Electrons orbit the nucleus of an atom in energy levels called shells.",
@@ -104,6 +106,8 @@ export function mount(root) {
   let draws = 0;
   let currentFact = getRandomFact();
   let gameMode = null; // 'multiplayer' or 'computer'
+  let gameStartTime = Date.now();
+  let playTime = 0;
 
   const container = document.createElement('div');
   container.className = 'stem-tic-tac-toe';
@@ -226,14 +230,38 @@ export function mount(root) {
     winner = checkWinner(board);
     if (winner) {
       gameOver = true;
+      playTime = Math.floor((Date.now() - gameStartTime) / 1000);
+      
       if (winner === 'X') {
         xWins++;
         overlayTitle.textContent = 'Atom Wins!';
         overlayMessage.textContent = 'The atom has formed a stable configuration!';
+        // Save score for Atom win (player)
+        saveScore('stemTicTacToe', 100);
+        updateStatistics('stemTicTacToe', {
+          score: 100,
+          playTime,
+          result: 'win'
+        });
       } else {
         oWins++;
         overlayTitle.textContent = 'Electron Wins!';
         overlayMessage.textContent = 'The electron has achieved the perfect orbit!';
+        // Save score for Electron win (AI or player 2)
+        if (gameMode === 'multiplayer') {
+          saveScore('stemTicTacToe', 100);
+          updateStatistics('stemTicTacToe', {
+            score: 100,
+            playTime,
+            result: 'win'
+          });
+        } else {
+          updateStatistics('stemTicTacToe', {
+            score: 0,
+            playTime,
+            result: 'loss'
+          });
+        }
       }
       overlay.classList.remove('hidden');
       currentFact = getRandomFact();
@@ -244,8 +272,14 @@ export function mount(root) {
     if (isBoardFull(board)) {
       gameOver = true;
       draws++;
+      playTime = Math.floor((Date.now() - gameStartTime) / 1000);
       overlayTitle.textContent = 'Draw!';
       overlayMessage.textContent = 'No winner - the atoms and electrons are in equilibrium.';
+      updateStatistics('stemTicTacToe', {
+        score: 50,
+        playTime,
+        result: 'draw'
+      });
       overlay.classList.remove('hidden');
       currentFact = getRandomFact();
       factDisplay.textContent = currentFact;
@@ -260,6 +294,8 @@ export function mount(root) {
     currentPlayer = 'X';
     gameOver = false;
     winner = null;
+    gameStartTime = Date.now();
+    playTime = 0;
     overlay.classList.add('hidden');
     updateDisplay();
   }

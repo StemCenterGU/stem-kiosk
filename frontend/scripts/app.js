@@ -22,6 +22,18 @@ const activities = [
   },
 ];
 
+// Navigation pages (not games)
+const navigationPages = {
+  leaderboard: {
+    title: "Leaderboards",
+    module: () => import("./modules/leaderboard.js"),
+  },
+  statistics: {
+    title: "Statistics",
+    module: () => import("./modules/statistics.js"),
+  },
+};
+
 const state = {
   mountedActivity: null,
 };
@@ -160,6 +172,37 @@ async function openActivity(activityId) {
     console.error("Failed to load activity", err);
     activityFrame.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:1.25rem;">
       <p>Failed to load. Please try again.</p>
+    </div>`;
+  }
+}
+
+async function openNavigationPage(pageId) {
+  console.log("Opening navigation page:", pageId);
+  await audioManager.playTap();
+  const page = navigationPages[pageId];
+  if (!page) {
+    console.error("Page not found:", pageId);
+    return;
+  }
+
+  activityTitle.textContent = page.title;
+  homeView.classList.add("hidden");
+  activityView.classList.remove("hidden");
+
+  try {
+    console.log("Loading module for:", pageId);
+    const module = await page.module();
+    console.log("Module loaded:", module);
+    if (state.mountedActivity && typeof state.mountedActivity.destroy === "function") {
+      state.mountedActivity.destroy();
+    }
+    state.mountedActivity = module.mount(activityFrame);
+    console.log("Page mounted successfully");
+  } catch (err) {
+    console.error("Failed to load page", err);
+    activityFrame.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-muted);font-size:1.25rem;">
+      <p>Failed to load. Please try again.</p>
+      <p style="font-size:0.875rem;margin-top:10px;">Error: ${err.message}</p>
     </div>`;
   }
 }
@@ -346,10 +389,54 @@ function updateScreensaverImage() {
   screensaverState.currentLayer = screensaverState.currentLayer === 1 ? 2 : 1;
 }
 
+// Setup navigation buttons
+function setupNavigation() {
+  const navLeaderboard = document.getElementById("navLeaderboard");
+  const navStatistics = document.getElementById("navStatistics");
+  
+  console.log("Setting up navigation buttons:", { navLeaderboard, navStatistics });
+  
+  const handleNavClick = (pageId, buttonName) => {
+    return (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log(`${buttonName} button clicked`);
+      openNavigationPage(pageId);
+    };
+  };
+  
+  if (navLeaderboard) {
+    navLeaderboard.addEventListener("click", handleNavClick("leaderboard", "Leaderboard"));
+    navLeaderboard.addEventListener("touchstart", handleNavClick("leaderboard", "Leaderboard"), { passive: false });
+    navLeaderboard.addEventListener("keydown", (evt) => {
+      if (evt.key === "Enter" || evt.key === " ") {
+        evt.preventDefault();
+        openNavigationPage("leaderboard");
+      }
+    });
+  } else {
+    console.error("navLeaderboard button not found!");
+  }
+  
+  if (navStatistics) {
+    navStatistics.addEventListener("click", handleNavClick("statistics", "Statistics"));
+    navStatistics.addEventListener("touchstart", handleNavClick("statistics", "Statistics"), { passive: false });
+    navStatistics.addEventListener("keydown", (evt) => {
+      if (evt.key === "Enter" || evt.key === " ") {
+        evt.preventDefault();
+        openNavigationPage("statistics");
+      }
+    });
+  } else {
+    console.error("navStatistics button not found!");
+  }
+}
+
 // Init
 function init() {
   initTheme();
   setupActivityCards();
+  setupNavigation();
   initClock();
   setupControls();
 }
