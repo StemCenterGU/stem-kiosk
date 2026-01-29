@@ -44,13 +44,16 @@
 /* ============================================
    RESET & BASE
    ============================================ */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   overflow: hidden;
 }
@@ -62,7 +65,8 @@ body {
   -webkit-font-smoothing: antialiased;
   touch-action: manipulation;
   user-select: none;
-  cursor: default; /* Show cursor by default, hide on large kiosk screens */
+  cursor: default;
+  /* Show cursor by default, hide on large kiosk screens */
   transition: background 0.3s, color 0.3s;
 }
 
@@ -204,9 +208,12 @@ button {
 }
 
 @keyframes gradientShift {
-  0%, 100% {
+
+  0%,
+  100% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
@@ -361,10 +368,21 @@ button {
 }
 
 /* Theme toggle icons */
-[data-theme="dark"] .theme-icon-dark { display: block; }
-[data-theme="dark"] .theme-icon-light { display: none; }
-[data-theme="light"] .theme-icon-dark { display: none; }
-[data-theme="light"] .theme-icon-light { display: block; }
+[data-theme="dark"] .theme-icon-dark {
+  display: block;
+}
+
+[data-theme="dark"] .theme-icon-light {
+  display: none;
+}
+
+[data-theme="light"] .theme-icon-dark {
+  display: none;
+}
+
+[data-theme="light"] .theme-icon-light {
+  display: block;
+}
 
 /* ============================================
    ACTIVITY VIEW - Controls at BOTTOM
@@ -462,29 +480,27 @@ button {
   opacity: 1;
 }
 
-/* Ken Burns effect - slow zoom and pan */
-.screensaver__img.animate {
-  animation: kenBurns 10s ease-in-out forwards;
-}
+/* Ken Burns effect - DISABLED to prevent text cutoff */
+/* .screensaver__img.animate { animation: kenBurns 10s ease-in-out forwards; } */
 
 @keyframes kenBurns {
   0% {
     transform: scale(1) translate(0, 0);
   }
+
   100% {
     transform: scale(1.1) translate(-2%, -1%);
   }
 }
 
-/* Alternate animation direction for variety */
-.screensaver__img.animate-alt {
-  animation: kenBurnsAlt 10s ease-in-out forwards;
-}
+/* Alternate animation direction - DISABLED to prevent text cutoff */
+/* .screensaver__img.animate-alt { animation: kenBurnsAlt 10s ease-in-out forwards; } */
 
 @keyframes kenBurnsAlt {
   0% {
     transform: scale(1.05) translate(-1%, 1%);
   }
+
   100% {
     transform: scale(1) translate(1%, -1%);
   }
@@ -507,8 +523,15 @@ button {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
+
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 /* ============================================
@@ -949,10 +972,21 @@ button {
 }
 
 /* Kahoot colors */
-.mission-quiz__option:nth-child(1) { background: #e21b3c; }
-.mission-quiz__option:nth-child(2) { background: #1368ce; }
-.mission-quiz__option:nth-child(3) { background: #d89e00; }
-.mission-quiz__option:nth-child(4) { background: #26890c; }
+.mission-quiz__option:nth-child(1) {
+  background: #e21b3c;
+}
+
+.mission-quiz__option:nth-child(2) {
+  background: #1368ce;
+}
+
+.mission-quiz__option:nth-child(3) {
+  background: #d89e00;
+}
+
+.mission-quiz__option:nth-child(4) {
+  background: #26890c;
+}
 
 .mission-quiz__option:hover {
   transform: scale(1.03);
@@ -974,8 +1008,15 @@ button {
 }
 
 @keyframes correctPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 /* Controls */
@@ -1129,7 +1170,9 @@ button {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .pdf-error-content {
@@ -1403,15 +1446,31 @@ button {
 }
 
 @keyframes atomPulse {
-  0% { transform: scale(0); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes electronPulse {
-  0% { transform: scale(0) rotate(0deg); }
-  50% { transform: scale(1.1) rotate(180deg); }
-  100% { transform: scale(1) rotate(360deg); }
+  0% {
+    transform: scale(0) rotate(0deg);
+  }
+
+  50% {
+    transform: scale(1.1) rotate(180deg);
+  }
+
+  100% {
+    transform: scale(1) rotate(360deg);
+  }
 }
 
 .stem-tic-tac-toe__status {
@@ -2162,6 +2221,7 @@ button {
 
 /* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
+
   .nav-btn:active,
   .activity-card:active {
     transform: scale(0.98);
@@ -2173,7 +2233,8 @@ button {
 }
 
 /* High DPI displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+@media (-webkit-min-device-pixel-ratio: 2),
+(min-resolution: 192dpi) {
   .home__title {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

@@ -94,16 +94,23 @@ class KioskRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(encoded)
 
     def handle_screensaver_request(self):
-        images_dir = BASE_DIR / "images"
+        # Look in the specific 'screensaver' subfolder first
+        screensaver_dir = BASE_DIR / "images" / "screensaver"
+        images_dir = screensaver_dir if screensaver_dir.exists() else (BASE_DIR / "images")
+        
         if not images_dir.exists():
             return self.send_json({"images": []})
+        
         extensions = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
-        files = [
-            f"images/{name}"
-            for name in sorted(os.listdir(images_dir))
-            if Path(name).suffix.lower() in extensions
-        ]
-        return self.send_json({"images": files})
+        files_list = []
+        
+        prefix = "images/screensaver/" if images_dir == screensaver_dir else "images/"
+        
+        for name in sorted(os.listdir(images_dir)):
+            if Path(name).suffix.lower() in extensions:
+                files_list.append(f"{prefix}{name}")
+        
+        return self.send_json({"images": files_list})
 
 
 def terminate_chromium():

@@ -377,13 +377,13 @@ function updateScreensaverImage() {
   // Remove animations from inactive layer
   inactiveLayer.classList.remove("active", "animate", "animate-alt");
 
-  // Activate new layer with Ken Burns animation
+  // Activate new layer WITHOUT Ken Burns animation (disabled to prevent text cutoff)
   activeLayer.classList.add("active");
   activeLayer.classList.remove("animate", "animate-alt");
 
-  // Use alternate animation direction based on image index for variety
-  void activeLayer.offsetWidth; // Force reflow to restart animation
-  activeLayer.classList.add(screensaverState.index % 2 === 0 ? "animate" : "animate-alt");
+  // Ken Burns animation disabled - images will display statically
+  // void activeLayer.offsetWidth; // Force reflow to restart animation
+  // activeLayer.classList.add(screensaverState.index % 2 === 0 ? "animate" : "animate-alt");
 
   // Toggle layer for next image
   screensaverState.currentLayer = screensaverState.currentLayer === 1 ? 2 : 1;
