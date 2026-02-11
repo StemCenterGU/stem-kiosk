@@ -465,15 +465,35 @@ button {
   overflow: hidden;
 }
 
-/* Two-layer crossfade system */
-.screensaver__img {
+/* YouTube-style blurred background layer */
+.screensaver__blur {
   position: absolute;
-  inset: 0;
+  inset: -20px;
+  /* Extend beyond edges to hide blur artifacts */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   opacity: 0;
+  filter: blur(30px) brightness(0.4);
+  transform: scale(1.1);
   transition: opacity 1.5s ease-in-out;
+  z-index: 1;
+}
+
+.screensaver__blur.active {
+  opacity: 1;
+}
+
+/* Main image layer (on top of blur) */
+.screensaver__img {
+  position: absolute;
+  inset: 0;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+  z-index: 2;
 }
 
 .screensaver__img.active {
@@ -2238,5 +2258,249 @@ button {
   .home__title {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ============================================
+   SNAKE GAME - Full Screen
+   ============================================ */
+.snake-game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+  padding: 70px 10px 10px 10px;
+  gap: 12px;
+  background: linear-gradient(135deg, var(--bg) 0%, var(--surface) 100%);
+}
+
+.snake-game__header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  padding: 20px 30px;
+  background: var(--surface);
+  border-bottom: 2px solid var(--border);
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.snake-game__header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.snake-game__score {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.snake-game__score span {
+  font-size: 1rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.snake-game__score strong {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.snake-game__btn {
+  padding: 10px 24px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.snake-game__btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+}
+
+.snake-game__btn:active {
+  transform: translateY(0);
+}
+
+.snake-game__btn--large {
+  padding: 16px 36px;
+  font-size: 1.125rem;
+}
+
+.snake-game__canvas-wrapper {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 120px;
+  box-shadow:
+    0 0 40px rgba(0, 0, 0, 0.2),
+    0 20px 60px rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#snakeCanvas {
+  display: block;
+  background: var(--bg);
+}
+
+.snake-game__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.snake-game__overlay.hidden {
+  display: none;
+}
+
+.snake-game__overlay h3 {
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--red);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.snake-game__overlay p {
+  font-size: 1.25rem;
+  color: white;
+  margin: 0;
+  font-weight: 600;
+}
+
+.snake-game__overlay span {
+  color: var(--accent);
+  font-weight: 900;
+  font-size: 1.5rem;
+}
+
+.snake-game__hint {
+  font-size: 0.875rem !important;
+  color: var(--text-muted) !important;
+  font-weight: 500 !important;
+}
+
+.snake-game__controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 20px;
+}
+
+.snake-game__controls p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.snake-game__touch-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.snake-game__arrow-row {
+  display: flex;
+  gap: 15px;
+}
+
+.snake-game__arrow {
+  width: 120px;
+  height: 120px;
+  background: var(--surface-hover);
+  border: 3px solid var(--border);
+  border-radius: 16px;
+  font-size: 3rem;
+  color: var(--accent);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  font-weight: 700;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.snake-game__arrow:active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .snake-game {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    padding: 10px;
+    gap: 10px;
+  }
+
+  #snakeCanvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .snake-game__overlay h3 {
+    font-size: 2.5rem;
+  }
+
+  .snake-game__arrow {
+    width: 90px;
+    height: 90px;
+    font-size: 2.5rem;
+  }
+
+  .snake-game__controls {
+    padding: 10px;
   }
 }

@@ -5,7 +5,8 @@ import { getAllLeaderboards, getLeaderboard, formatDate } from '../storage.js';
 const GAME_NAMES = {
   stem2048: 'Fusion 2048',
   missionQuiz: 'Mission Quiz',
-  stemTicTacToe: 'Atom vs Electron'
+  stemTicTacToe: 'Atom vs Electron',
+  snakeGame: 'Snake Game'
 };
 
 export function mount(root) {
@@ -59,8 +60,8 @@ export function mount(root) {
   });
 
   // If no scores exist
-  if (Object.keys(allLeaderboards).length === 0 || 
-      Object.values(allLeaderboards).every(scores => scores.length === 0)) {
+  if (Object.keys(allLeaderboards).length === 0 ||
+    Object.values(allLeaderboards).every(scores => scores.length === 0)) {
     content.innerHTML = `
       <div class="leaderboard__empty">
         <div class="leaderboard__empty-icon">📊</div>

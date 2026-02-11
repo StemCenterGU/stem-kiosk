@@ -1,0 +1,224 @@
+/* ============================================
+   WHITEBOARD - TRUE FULL SCREEN V3
+   ============================================ */
+.whiteboard {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 5000;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.whiteboard__header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    background: #f8fafc;
+    border-bottom: 3px solid #e2e8f0;
+    flex-shrink: 0;
+    border-radius: 0;
+    transition: all 0.3s ease;
+}
+
+.whiteboard__header--collapsed {
+    padding: 0;
+}
+
+.whiteboard__header--collapsed .whiteboard__header-content {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+.whiteboard__toggle {
+    width: 100%;
+    padding: 15px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.whiteboard__toggle:hover {
+    background: #2563eb;
+}
+
+.whiteboard__toggle .toggle-icon-collapse {
+    display: block;
+}
+
+.whiteboard__toggle .toggle-icon-expand {
+    display: none;
+}
+
+.whiteboard__header--collapsed .whiteboard__toggle .toggle-icon-collapse {
+    display: none;
+}
+
+.whiteboard__header--collapsed .whiteboard__toggle .toggle-icon-expand {
+    display: block;
+}
+
+.whiteboard__header-content {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    padding: 20px 40px;
+    transition: all 0.3s ease;
+    max-height: 500px;
+    opacity: 1;
+    overflow: visible;
+}
+
+.whiteboard__header-content h3 {
+    margin: 0;
+    font-size: 2.5rem !important;
+    color: #1e293b;
+    font-weight: 800;
+    margin-right: 20px;
+}
+
+.whiteboard__tools {
+    display: flex;
+    gap: 15px;
+}
+
+.whiteboard__tool {
+    padding: 12px 25px;
+    background: #ffffff;
+    color: #1e293b;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.whiteboard__tool:hover {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.whiteboard__tool--active {
+    background: #3b82f6;
+    color: white;
+    border-color: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.whiteboard__colors {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-left: auto;
+}
+
+.whiteboard__color {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all 0.2s;
+}
+
+.whiteboard__color--active {
+    border-color: #3b82f6;
+    transform: scale(1.15);
+}
+
+.whiteboard__size {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-left: 20px;
+    border-left: 2px solid #e2e8f0;
+}
+
+.whiteboard__size label {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #64748b;
+}
+
+.whiteboard__size input[type="range"] {
+    width: 150px;
+    height: 30px;
+}
+
+.whiteboard__size span {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #3b82f6;
+    min-width: 40px;
+}
+
+.whiteboard__close {
+    margin-left: 20px;
+    padding: 12px 25px;
+    background: #ef4444;
+    color: white;
+    border: 2px solid #dc2626;
+    border-radius: 12px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.whiteboard__close:hover {
+    background: #dc2626;
+    border-color: #b91c1c;
+    transform: scale(1.05);
+}
+
+.whiteboard__close svg {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+}
+
+.whiteboard__canvas-wrapper {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: #ffffff;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+#whiteboardCanvas {
+    background: #ffffff;
+    cursor: crosshair;
+    touch-action: none;
+    width: 100%;
+    height: 100%;
+    display: block;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+}

@@ -15,6 +15,16 @@ const activities = [
     module: () => import("./modules/stemTicTacToe.js"),
   },
   {
+    id: "snakeGame",
+    title: "Snake Game",
+    module: () => import("./modules/snakeGame.js"),
+  },
+  {
+    id: "whiteboard",
+    title: "Whiteboard",
+    module: () => import("./modules/whiteboard.js"),
+  },
+  {
     id: "teamsGuide",
     title: "Teams Guide",
     module: () => import("./modules/pdfViewer.js"),
@@ -116,6 +126,8 @@ const clockEl = document.getElementById("clock");
 const screensaverEl = document.getElementById("screensaver");
 const screensaverLayer1 = document.getElementById("screensaverLayer1");
 const screensaverLayer2 = document.getElementById("screensaverLayer2");
+const screensaverBlur1 = document.getElementById("screensaverBlur1");
+const screensaverBlur2 = document.getElementById("screensaverBlur2");
 const exitOverlay = document.getElementById("exitOverlay");
 const exitCancel = document.getElementById("exitCancel");
 
@@ -334,9 +346,11 @@ function deactivateScreensaver() {
   }
   screensaverEl.classList.add("hidden");
 
-  // Clean up both layers
-  screensaverLayer1.classList.remove("active", "animate", "animate-alt");
-  screensaverLayer2.classList.remove("active", "animate", "animate-alt");
+  // Clean up all layers (main + blur)
+  screensaverLayer1.classList.remove("active");
+  screensaverLayer2.classList.remove("active");
+  screensaverBlur1.classList.remove("active");
+  screensaverBlur2.classList.remove("active");
   screensaverState.currentLayer = 1;
 }
 
@@ -370,20 +384,20 @@ function updateScreensaverImage() {
   // Determine which layer to activate (crossfade)
   const activeLayer = screensaverState.currentLayer === 1 ? screensaverLayer1 : screensaverLayer2;
   const inactiveLayer = screensaverState.currentLayer === 1 ? screensaverLayer2 : screensaverLayer1;
+  const activeBlur = screensaverState.currentLayer === 1 ? screensaverBlur1 : screensaverBlur2;
+  const inactiveBlur = screensaverState.currentLayer === 1 ? screensaverBlur2 : screensaverBlur1;
 
-  // Set the new image on the inactive layer
+  // Set the new image on both main layer and blur layer
   activeLayer.style.backgroundImage = `url(${src})`;
+  activeBlur.style.backgroundImage = `url(${src})`;
 
-  // Remove animations from inactive layer
-  inactiveLayer.classList.remove("active", "animate", "animate-alt");
+  // Remove active class from inactive layers
+  inactiveLayer.classList.remove("active");
+  inactiveBlur.classList.remove("active");
 
-  // Activate new layer WITHOUT Ken Burns animation (disabled to prevent text cutoff)
+  // Activate new layers
   activeLayer.classList.add("active");
-  activeLayer.classList.remove("animate", "animate-alt");
-
-  // Ken Burns animation disabled - images will display statically
-  // void activeLayer.offsetWidth; // Force reflow to restart animation
-  // activeLayer.classList.add(screensaverState.index % 2 === 0 ? "animate" : "animate-alt");
+  activeBlur.classList.add("active");
 
   // Toggle layer for next image
   screensaverState.currentLayer = screensaverState.currentLayer === 1 ? 2 : 1;
@@ -393,9 +407,9 @@ function updateScreensaverImage() {
 function setupNavigation() {
   const navLeaderboard = document.getElementById("navLeaderboard");
   const navStatistics = document.getElementById("navStatistics");
-  
+
   console.log("Setting up navigation buttons:", { navLeaderboard, navStatistics });
-  
+
   const handleNavClick = (pageId, buttonName) => {
     return (e) => {
       e.preventDefault();
@@ -404,7 +418,7 @@ function setupNavigation() {
       openNavigationPage(pageId);
     };
   };
-  
+
   if (navLeaderboard) {
     navLeaderboard.addEventListener("click", handleNavClick("leaderboard", "Leaderboard"));
     navLeaderboard.addEventListener("touchstart", handleNavClick("leaderboard", "Leaderboard"), { passive: false });
@@ -417,7 +431,7 @@ function setupNavigation() {
   } else {
     console.error("navLeaderboard button not found!");
   }
-  
+
   if (navStatistics) {
     navStatistics.addEventListener("click", handleNavClick("statistics", "Statistics"));
     navStatistics.addEventListener("touchstart", handleNavClick("statistics", "Statistics"), { passive: false });

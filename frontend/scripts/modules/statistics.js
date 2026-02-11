@@ -5,7 +5,8 @@ import { getStatistics, getGameStatistics, formatTime, formatDate } from '../sto
 const GAME_NAMES = {
   stem2048: 'Fusion 2048',
   missionQuiz: 'Mission Quiz',
-  stemTicTacToe: 'Atom vs Electron'
+  stemTicTacToe: 'Atom vs Electron',
+  snakeGame: 'Snake Game'
 };
 
 export function mount(root) {
