@@ -5,54 +5,136 @@ export function mount(container) {
     let currentColor = '#000000';
     let currentTool = 'pen';
     let lineWidth = 3;
+    let lineStyle = 'solid'; // solid, dashed, dotted, dashdot
     let canvas, ctx;
     let lastX = 0;
     let lastY = 0;
-    let isHeaderCollapsed = false;
+    let isSidebarCollapsed = false;
 
     function init() {
         container.innerHTML = `
       <div class="whiteboard">
-        <div class="whiteboard__header" id="whiteboardHeader">
-          <button class="whiteboard__toggle" id="headerToggle" aria-label="Toggle toolbar">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="toggle-icon-expand">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" class="toggle-icon-collapse">
-              <polyline points="18 15 12 9 6 15"></polyline>
-            </svg>
-          </button>
-          <div class="whiteboard__header-content">
-            <h3>Whiteboard</h3>
-            <div class="whiteboard__tools">
-              <button class="whiteboard__tool whiteboard__tool--active" data-tool="pen">✏️ Pen</button>
-              <button class="whiteboard__tool" data-tool="eraser">🧹 Eraser</button>
-              <button class="whiteboard__tool" data-tool="clear">🗑️ Clear All</button>
-            </div>
-            <div class="whiteboard__colors">
-              <button class="whiteboard__color whiteboard__color--active" data-color="#000000" style="background: #000000"></button>
-              <button class="whiteboard__color" data-color="#ff0000" style="background: #ff0000"></button>
-              <button class="whiteboard__color" data-color="#00ff00" style="background: #00ff00"></button>
-              <button class="whiteboard__color" data-color="#0000ff" style="background: #0000ff"></button>
-              <button class="whiteboard__color" data-color="#ffff00" style="background: #ffff00"></button>
-              <button class="whiteboard__color" data-color="#ff00ff" style="background: #ff00ff"></button>
-              <button class="whiteboard__color" data-color="#00ffff" style="background: #00ffff"></button>
-              <button class="whiteboard__color" data-color="#ffffff" style="background: #ffffff; border: 2px solid #ccc"></button>
-            </div>
-            <div class="whiteboard__size">
-              <label>Size:</label>
-              <input type="range" id="lineWidth" min="1" max="20" value="3">
-              <span id="sizeValue">3</span>
-            </div>
-            <button class="whiteboard__close" id="whiteboardClose" aria-label="Close whiteboard">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
+        <!-- Sidebar Toolbar -->
+        <div class="whiteboard__sidebar" id="whiteboardSidebar">
+          <div class="whiteboard__sidebar-header">
+            <h3>🎨 Tools</h3>
+            <button class="sidebar__toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
               </svg>
-              <span>Close</span>
             </button>
           </div>
+
+          <div class="whiteboard__sidebar-content">
+            <!-- Drawing Tools -->
+            <div class="sidebar__section">
+              <label class="sidebar__label">Drawing</label>
+              <button class="whiteboard__tool whiteboard__tool--active" data-tool="pen">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+                  <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+                </svg>
+                <span>Pen</span>
+              </button>
+              <button class="whiteboard__tool" data-tool="eraser">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 20H7L3 16l10-10 7 7-4 4"/>
+                </svg>
+                <span>Eraser</span>
+              </button>
+            </div>
+
+            <!-- Colors -->
+            <div class="sidebar__section">
+              <label class="sidebar__label">Colors</label>
+              <div class="whiteboard__colors">
+                <button class="whiteboard__color whiteboard__color--active" data-color="#000000" style="background: #000000" title="Black"></button>
+                <button class="whiteboard__color" data-color="#ff0000" style="background: #ff0000" title="Red"></button>
+                <button class="whiteboard__color" data-color="#00ff00" style="background: #00ff00" title="Green"></button>
+                <button class="whiteboard__color" data-color="#0000ff" style="background: #0000ff" title="Blue"></button>
+                <button class="whiteboard__color" data-color="#ffff00" style="background: #ffff00" title="Yellow"></button>
+                <button class="whiteboard__color" data-color="#ff00ff" style="background: #ff00ff" title="Magenta"></button>
+                <button class="whiteboard__color" data-color="#00ffff" style="background: #00ffff" title="Cyan"></button>
+                <button class="whiteboard__color" data-color="#ffffff" style="background: #ffffff; border: 2px solid #ccc" title="White"></button>
+              </div>
+            </div>
+
+            <!-- Brush Size -->
+            <div class="sidebar__section">
+              <label class="sidebar__label">Size: <span id="sizeValue">3</span>px</label>
+              <input type="range" id="lineWidth" min="1" max="20" value="3" class="size-slider">
+            </div>
+
+            <!-- Line Style -->
+            <div class="sidebar__section">
+              <label class="sidebar__label">Line Style</label>
+              <div class="whiteboard__line-styles">
+                <button class="whiteboard__line-style whiteboard__line-style--active" data-style="solid" title="Solid">
+                  <svg width="60" height="20" viewBox="0 0 60 20">
+                    <line x1="5" y1="10" x2="55" y2="10" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                  </svg>
+                </button>
+                <button class="whiteboard__line-style" data-style="dashed" title="Dashed">
+                  <svg width="60" height="20" viewBox="0 0 60 20">
+                    <line x1="5" y1="10" x2="55" y2="10" stroke="currentColor" stroke-width="3" stroke-dasharray="10,5" stroke-linecap="round"/>
+                  </svg>
+                </button>
+                <button class="whiteboard__line-style" data-style="dotted" title="Dotted">
+                  <svg width="60" height="20" viewBox="0 0 60 20">
+                    <line x1="5" y1="10" x2="55" y2="10" stroke="currentColor" stroke-width="3" stroke-dasharray="2,5" stroke-linecap="round"/>
+                  </svg>
+                </button>
+                <button class="whiteboard__line-style" data-style="dashdot" title="Dash-Dot">
+                  <svg width="60" height="20" viewBox="0 0 60 20">
+                    <line x1="5" y1="10" x2="55" y2="10" stroke="currentColor" stroke-width="3" stroke-dasharray="10,5,2,5" stroke-linecap="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="sidebar__section sidebar__section--actions">
+              <button class="sidebar__action sidebar__action--clear" data-tool="clear">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                <span>Clear All</span>
+              </button>
+              
+              <button class="sidebar__action sidebar__action--save" id="whiteboardSave">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                  <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                  <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                <span>Save</span>
+              </button>
+              
+              <button class="sidebar__action sidebar__action--gallery" id="whiteboardGallery">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="3" width="7" height="7"></rect>
+                  <rect x="14" y="14" width="7" height="7"></rect>
+                  <rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                <span>My Boards</span>
+              </button>
+              
+              <button class="sidebar__action sidebar__action--close" id="whiteboardClose">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                <span>Close</span>
+              </button>
+            </div>
+          </div>
         </div>
+
+        <!-- Canvas Area -->
         <div class="whiteboard__canvas-wrapper">
           <canvas id="whiteboardCanvas"></canvas>
         </div>
@@ -60,23 +142,44 @@ export function mount(container) {
     `;
 
         canvas = document.getElementById('whiteboardCanvas');
-        ctx = canvas.getContext('2d');
+        ctx = canvas.getContext('2d', { willReadFrequently: false });
 
         // Dynamically set canvas size
         function resizeCanvas() {
             const wrapper = document.querySelector('.whiteboard__canvas-wrapper');
             if (wrapper) {
+                // Save current drawing
+                const imageData = canvas.toDataURL();
+
                 canvas.width = wrapper.clientWidth;
                 canvas.height = wrapper.clientHeight;
 
-                // Refill with white after resize
+                // Restore white background
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                // Reset drawing properties
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
+                // Restore saved drawing
+                if (imageData && imageData !== 'data:,') {
+                    const img = new Image();
+                    img.onload = () => {
+                        ctx.drawImage(img, 0, 0);
+                        setupCanvasContext();
+                    };
+                    img.src = imageData;
+                } else {
+                    setupCanvasContext();
+                }
             }
+        }
+
+        function setupCanvasContext() {
+            // Set all context properties for smooth drawing
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.lineWidth = lineWidth;
+            ctx.strokeStyle = currentColor;
+            ctx.fillStyle = currentColor;
+            ctx.setLineDash([]); // Ensure solid lines (no dashes)
         }
 
         // Initial resize
@@ -89,18 +192,18 @@ export function mount(container) {
     }
 
     function setupEventListeners() {
-        // Toggle button for collapsing/expanding header
-        const toggleBtn = document.getElementById('headerToggle');
-        const header = document.getElementById('whiteboardHeader');
-        if (toggleBtn && header) {
+        // Toggle button for collapsing/expanding sidebar
+        const toggleBtn = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('whiteboardSidebar');
+        if (toggleBtn && sidebar) {
             toggleBtn.addEventListener('click', () => {
-                isHeaderCollapsed = !isHeaderCollapsed;
-                if (isHeaderCollapsed) {
-                    header.classList.add('whiteboard__header--collapsed');
+                isSidebarCollapsed = !isSidebarCollapsed;
+                if (isSidebarCollapsed) {
+                    sidebar.classList.add('whiteboard__sidebar--collapsed');
                 } else {
-                    header.classList.remove('whiteboard__header--collapsed');
+                    sidebar.classList.remove('whiteboard__sidebar--collapsed');
                 }
-                // Resize canvas after header changes
+                // Resize canvas after sidebar changes
                 setTimeout(resizeCanvas, 100);
             });
         }
@@ -117,21 +220,34 @@ export function mount(container) {
             });
         }
 
-        // Tool buttons
+        // Save button
+        const saveBtn = document.getElementById('whiteboardSave');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', saveWhiteboard);
+        }
+
+        // Gallery button
+        const galleryBtn = document.getElementById('whiteboardGallery');
+        if (galleryBtn) {
+            galleryBtn.addEventListener('click', showGallery);
+        }
+
+        // Clear All button (in sidebar actions)
+        const clearBtn = document.querySelector('.sidebar__action--clear');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', clearCanvas);
+        }
+
+        // Tool buttons (Pen, Eraser)
         document.querySelectorAll('.whiteboard__tool').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const tool = e.target.dataset.tool;
-
-                if (tool === 'clear') {
-                    clearCanvas();
-                    return;
-                }
+                const tool = e.currentTarget.dataset.tool;
 
                 currentTool = tool;
                 document.querySelectorAll('.whiteboard__tool').forEach(b =>
                     b.classList.remove('whiteboard__tool--active')
                 );
-                e.target.classList.add('whiteboard__tool--active');
+                e.currentTarget.classList.add('whiteboard__tool--active');
             });
         });
 
@@ -152,6 +268,17 @@ export function mount(container) {
         lineWidthSlider.addEventListener('input', (e) => {
             lineWidth = e.target.value;
             sizeValue.textContent = lineWidth;
+        });
+
+        // Line style buttons
+        document.querySelectorAll('.whiteboard__line-style').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                lineStyle = e.currentTarget.dataset.style;
+                document.querySelectorAll('.whiteboard__line-style').forEach(b =>
+                    b.classList.remove('whiteboard__line-style--active')
+                );
+                e.currentTarget.classList.add('whiteboard__line-style--active');
+            });
         });
 
         // Mouse/Touch/Pointer events
@@ -187,42 +314,43 @@ export function mount(container) {
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        const pressure = e.pressure || 0.5;
 
-        points.push({ x, y, pressure });
-
-        if (points.length < 3) {
-            const b = points[0];
-            ctx.beginPath();
-            ctx.arc(b.x, b.y, (lineWidth * b.pressure) / 2, 0, Math.PI * 2);
-            ctx.fill();
-            return;
-        }
-
+        // Simple line drawing from last position to current position
         ctx.beginPath();
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
-        if (currentTool === 'eraser') {
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = lineWidth * 4; // Eraser is always a bit bigger
-        } else {
-            ctx.strokeStyle = currentColor;
-            // Adjust line width based on pressure for a natural feel
-            const adjustedWidth = lineWidth * (0.5 + pressure);
-            ctx.lineWidth = adjustedWidth;
+        // Apply line style
+        switch (lineStyle) {
+            case 'dashed':
+                ctx.setLineDash([10, 5]);
+                break;
+            case 'dotted':
+                ctx.setLineDash([2, 5]);
+                break;
+            case 'dashdot':
+                ctx.setLineDash([10, 5, 2, 5]);
+                break;
+            case 'solid':
+            default:
+                ctx.setLineDash([]);
+                break;
         }
 
-        // Quadratic curve for smoothing
-        ctx.moveTo(points[points.length - 2].x, points[points.length - 2].y);
-        const midX = (points[points.length - 2].x + x) / 2;
-        const midY = (points[points.length - 2].y + y) / 2;
-        ctx.quadraticCurveTo(points[points.length - 2].x, points[points.length - 2].y, midX, midY);
+        if (currentTool === 'eraser') {
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = lineWidth * 4;
+        } else {
+            ctx.strokeStyle = currentColor;
+            ctx.lineWidth = lineWidth;
+        }
 
+        ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
         ctx.stroke();
 
-        // Keep local array small for performance
-        if (points.length > 10) points.shift();
+        lastX = x;
+        lastY = y;
     }
 
     function stopDrawing() {
@@ -233,6 +361,157 @@ export function mount(container) {
     function clearCanvas() {
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Restore canvas context properties after clearing
+        setupCanvasContext();
+    }
+
+    function saveWhiteboard() {
+        // Prompt for name
+        const name = prompt('Name your whiteboard:', 'My Drawing');
+        if (!name) return;
+
+        // Optional: Student name
+        const studentName = prompt('Your name (optional, press Cancel to skip):', '');
+
+        // Convert canvas to image
+        const imageData = canvas.toDataURL('image/png');
+
+        // Get existing saved boards
+        const savedBoards = JSON.parse(localStorage.getItem('saved-whiteboards') || '[]');
+
+        // Add new board
+        savedBoards.push({
+            id: Date.now(),
+            name,
+            studentName: studentName || 'Anonymous',
+            imageData,
+            timestamp: new Date().toISOString()
+        });
+
+        // Save to localStorage
+        localStorage.setItem('saved-whiteboards', JSON.stringify(savedBoards));
+
+        alert(`✅ "${name}" saved successfully!`);
+    }
+
+    function showGallery() {
+        const savedBoards = JSON.parse(localStorage.getItem('saved-whiteboards') || '[]');
+
+        if (savedBoards.length === 0) {
+            alert('No saved whiteboards yet. Create and save your first drawing!');
+            return;
+        }
+
+        // Create gallery overlay
+        const galleryHTML = `
+            <div class="whiteboard-gallery-overlay" id="galleryOverlay">
+                <div class="whiteboard-gallery">
+                    <div class="whiteboard-gallery__header">
+                        <h2>My Saved Whiteboards</h2>
+                        <button class="whiteboard-gallery__close" id="galleryClose">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="whiteboard-gallery__grid">
+                        ${savedBoards.reverse().map(board => `
+                            <div class="whiteboard-gallery__item" data-id="${board.id}">
+                                <img src="${board.imageData}" alt="${board.name}">
+                                <div class="whiteboard-gallery__info">
+                                    <h3>${board.name}</h3>
+                                    <p>${board.studentName} • ${new Date(board.timestamp).toLocaleDateString()}</p>
+                                </div>
+                                <div class="whiteboard-gallery__actions">
+                                    <button class="gallery-btn gallery-btn--load" data-id="${board.id}">
+                                        📂 Load
+                                    </button>
+                                    <button class="gallery-btn gallery-btn--download" data-id="${board.id}">
+                                        💾 Download
+                                    </button>
+                                    <button class="gallery-btn gallery-btn--delete" data-id="${board.id}">
+                                        🗑️ Delete
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Add to DOM
+        document.body.insertAdjacentHTML('beforeend', galleryHTML);
+
+        // Event listeners
+        document.getElementById('galleryClose').addEventListener('click', closeGallery);
+
+        // Load button
+        document.querySelectorAll('.gallery-btn--load').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(e.target.dataset.id);
+                loadWhiteboard(id);
+                closeGallery();
+            });
+        });
+
+        // Download button
+        document.querySelectorAll('.gallery-btn--download').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(e.target.dataset.id);
+                downloadWhiteboard(id);
+            });
+        });
+
+        // Delete button
+        document.querySelectorAll('.gallery-btn--delete').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(e.target.dataset.id);
+                if (confirm('Are you sure you want to delete this whiteboard?')) {
+                    deleteWhiteboard(id);
+                    closeGallery();
+                    showGallery(); // Refresh gallery
+                }
+            });
+        });
+    }
+
+    function closeGallery() {
+        const overlay = document.getElementById('galleryOverlay');
+        if (overlay) overlay.remove();
+    }
+
+    function loadWhiteboard(id) {
+        const savedBoards = JSON.parse(localStorage.getItem('saved-whiteboards') || '[]');
+        const board = savedBoards.find(b => b.id === id);
+        if (!board) return;
+
+        // Load image onto canvas
+        const img = new Image();
+        img.onload = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0);
+        };
+        img.src = board.imageData;
+    }
+
+    function downloadWhiteboard(id) {
+        const savedBoards = JSON.parse(localStorage.getItem('saved-whiteboards') || '[]');
+        const board = savedBoards.find(b => b.id === id);
+        if (!board) return;
+
+        // Create download link
+        const link = document.createElement('a');
+        link.download = `${board.name}.png`;
+        link.href = board.imageData;
+        link.click();
+    }
+
+    function deleteWhiteboard(id) {
+        let savedBoards = JSON.parse(localStorage.getItem('saved-whiteboards') || '[]');
+        savedBoards = savedBoards.filter(b => b.id !== id);
+        localStorage.setItem('saved-whiteboards', JSON.stringify(savedBoards));
     }
 
     function destroy() {
