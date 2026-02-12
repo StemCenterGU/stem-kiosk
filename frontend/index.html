@@ -7,8 +7,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
   <title>STEM Discovery</title>
-  <link rel="stylesheet" href="styles/main.css?v=24" />
-  <link rel="stylesheet" href="styles/whiteboard.css?v=5" />
+  <link rel="stylesheet" href="styles/main.css?v=25" />
+  <link rel="stylesheet" href="styles/whiteboard.css?v=6" />
+  <link rel="stylesheet" href="styles/ideaIncubator.css?v=1" />
 </head>
 
 <body>
@@ -20,6 +21,9 @@
       <header class="home__header">
         <h1 class="home__title" data-text="STEM Center Fun Kiosk">STEM Center Fun Kiosk</h1>
       </header>
+
+      <!-- Rotating Banner Slideshow -->
+      <section id="homeBanner" class="home__banner"></section>
 
       <!-- Top Navigation Sidebar -->
       <nav class="home__nav">
@@ -138,6 +142,31 @@
           </div>
         </button>
 
+        <button class="activity-card" data-activity-id="ideaIncubator" tabindex="0">
+          <div class="activity-card__icon activity-card__icon--yellow">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 2v4" />
+              <path d="M12 18v4" />
+              <path d="M4.93 4.93l2.83 2.83" />
+              <path d="M16.24 16.24l2.83 2.83" />
+              <path d="M2 12h4" />
+              <path d="M18 12h4" />
+              <path d="M4.93 19.07l2.83-2.83" />
+              <path d="M16.24 7.76l2.83-2.83" />
+              <circle cx="12" cy="12" r="5" />
+            </svg>
+          </div>
+          <div class="activity-card__content">
+            <h2 class="activity-card__title">Idea Incubator</h2>
+            <p class="activity-card__desc">Share your brilliant STEM ideas</p>
+          </div>
+          <div class="activity-card__arrow">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </div>
+        </button>
+
         <button class="activity-card" data-activity-id="teamsGuide" tabindex="0">
           <div class="activity-card__icon activity-card__icon--purple">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -231,7 +260,7 @@
     </div>
   </div>
 
-  <script src="scripts/app.js?v=21" type="module"></script>
+  <script src="scripts/app.js?v=29" type="module"></script>
 </body>
 
 </html>

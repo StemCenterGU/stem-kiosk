@@ -1,3 +1,5 @@
+import initBanner from "./modules/banner.js";
+
 const activities = [
   {
     id: "stem2048",
@@ -23,6 +25,11 @@ const activities = [
     id: "whiteboard",
     title: "Whiteboard",
     module: () => import("./modules/whiteboard.js"),
+  },
+  {
+    id: "ideaIncubator",
+    title: "Idea Incubator",
+    module: () => import("./modules/ideaIncubator.js"),
   },
   {
     id: "teamsGuide",
@@ -453,6 +460,7 @@ function init() {
   setupNavigation();
   initClock();
   setupControls();
+  initBanner();
 }
 
 if (document.readyState === "loading") {

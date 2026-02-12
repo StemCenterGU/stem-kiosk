@@ -7,7 +7,7 @@ import { saveScore, updateStatistics } from '../storage.js';
 const GRID_WIDTH = 20;  // Fewer columns to keep board size
 const GRID_HEIGHT = 16; // Fewer rows to keep board size
 const CELL_SIZE = 50;   // Extra large cells
-const INITIAL_SPEED = 150;  // Slower speed (higher = slower)
+const INITIAL_SPEED = 200;  // Slower speed (higher = slower)
 const SPEED_INCREMENT = 2;
 
 export function mount(container) {

@@ -144,44 +144,6 @@ export function mount(container) {
         canvas = document.getElementById('whiteboardCanvas');
         ctx = canvas.getContext('2d', { willReadFrequently: false });
 
-        // Dynamically set canvas size
-        function resizeCanvas() {
-            const wrapper = document.querySelector('.whiteboard__canvas-wrapper');
-            if (wrapper) {
-                // Save current drawing
-                const imageData = canvas.toDataURL();
-
-                canvas.width = wrapper.clientWidth;
-                canvas.height = wrapper.clientHeight;
-
-                // Restore white background
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // Restore saved drawing
-                if (imageData && imageData !== 'data:,') {
-                    const img = new Image();
-                    img.onload = () => {
-                        ctx.drawImage(img, 0, 0);
-                        setupCanvasContext();
-                    };
-                    img.src = imageData;
-                } else {
-                    setupCanvasContext();
-                }
-            }
-        }
-
-        function setupCanvasContext() {
-            // Set all context properties for smooth drawing
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.lineWidth = lineWidth;
-            ctx.strokeStyle = currentColor;
-            ctx.fillStyle = currentColor;
-            ctx.setLineDash([]); // Ensure solid lines (no dashes)
-        }
-
         // Initial resize
         resizeCanvas();
 
@@ -189,6 +151,44 @@ export function mount(container) {
         window.addEventListener('resize', resizeCanvas);
 
         setupEventListeners();
+    }
+
+    // Dynamically set canvas size (moved outside init for accessibility)
+    function resizeCanvas() {
+        const wrapper = document.querySelector('.whiteboard__canvas-wrapper');
+        if (wrapper) {
+            // Save current drawing
+            const imageData = canvas.toDataURL();
+
+            canvas.width = wrapper.clientWidth;
+            canvas.height = wrapper.clientHeight;
+
+            // Restore white background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Restore saved drawing
+            if (imageData && imageData !== 'data:,') {
+                const img = new Image();
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0);
+                    setupCanvasContext();
+                };
+                img.src = imageData;
+            } else {
+                setupCanvasContext();
+            }
+        }
+    }
+
+    function setupCanvasContext() {
+        // Set all context properties for smooth drawing
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = currentColor;
+        ctx.fillStyle = currentColor;
+        ctx.setLineDash([]); // Ensure solid lines (no dashes)
     }
 
     function setupEventListeners() {
@@ -366,32 +366,164 @@ export function mount(container) {
     }
 
     function saveWhiteboard() {
-        // Prompt for name
-        const name = prompt('Name your whiteboard:', 'My Drawing');
-        if (!name) return;
+        showKeyboardDialog();
+    }
 
-        // Optional: Student name
-        const studentName = prompt('Your name (optional, press Cancel to skip):', '');
+    function showKeyboardDialog() {
+        const dialogHTML = `
+            <div class="keyboard-overlay" id="keyboardOverlay">
+                <div class="keyboard-dialog">
+                    <div class="keyboard-dialog__header">
+                        <h2>Save Whiteboard</h2>
+                        <button class="keyboard-dialog__close" id="keyboardClose">×</button>
+                    </div>
+                    <div class="keyboard-dialog__body">
+                        <div class="keyboard-input-group">
+                            <label>Whiteboard Name:</label>
+                            <input type="text" id="whiteboardName" class="keyboard-input" value="My Drawing" maxlength="30" />
+                        </div>
+                        <div class="keyboard-input-group">
+                            <label>Your Name (optional):</label>
+                            <input type="text" id="studentName" class="keyboard-input" value="" maxlength="30" />
+                        </div>
+                        <div class="on-screen-keyboard" id="onScreenKeyboard">
+                            <div class="keyboard-row">
+                                <button class="key-btn">1</button>
+                                <button class="key-btn">2</button>
+                                <button class="key-btn">3</button>
+                                <button class="key-btn">4</button>
+                                <button class="key-btn">5</button>
+                                <button class="key-btn">6</button>
+                                <button class="key-btn">7</button>
+                                <button class="key-btn">8</button>
+                                <button class="key-btn">9</button>
+                                <button class="key-btn">0</button>
+                            </div>
+                            <div class="keyboard-row">
+                                <button class="key-btn">Q</button>
+                                <button class="key-btn">W</button>
+                                <button class="key-btn">E</button>
+                                <button class="key-btn">R</button>
+                                <button class="key-btn">T</button>
+                                <button class="key-btn">Y</button>
+                                <button class="key-btn">U</button>
+                                <button class="key-btn">I</button>
+                                <button class="key-btn">O</button>
+                                <button class="key-btn">P</button>
+                            </div>
+                            <div class="keyboard-row">
+                                <button class="key-btn">A</button>
+                                <button class="key-btn">S</button>
+                                <button class="key-btn">D</button>
+                                <button class="key-btn">F</button>
+                                <button class="key-btn">G</button>
+                                <button class="key-btn">H</button>
+                                <button class="key-btn">J</button>
+                                <button class="key-btn">K</button>
+                                <button class="key-btn">L</button>
+                            </div>
+                            <div class="keyboard-row">
+                                <button class="key-btn">Z</button>
+                                <button class="key-btn">X</button>
+                                <button class="key-btn">C</button>
+                                <button class="key-btn">V</button>
+                                <button class="key-btn">B</button>
+                                <button class="key-btn">N</button>
+                                <button class="key-btn">M</button>
+                            </div>
+                            <div class="keyboard-row">
+                                <button class="key-btn key-btn--wide">Space</button>
+                                <button class="key-btn key-btn--backspace">⌫</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="keyboard-dialog__footer">
+                        <button class="keyboard-btn keyboard-btn--cancel" id="keyboardCancel">Cancel</button>
+                        <button class="keyboard-btn keyboard-btn--save" id="keyboardSave">💾 Save</button>
+                    </div>
+                </div>
+            </div>
+        `;
 
-        // Convert canvas to image
-        const imageData = canvas.toDataURL('image/png');
+        document.body.insertAdjacentHTML('beforeend', dialogHTML);
 
-        // Get existing saved boards
-        const savedBoards = JSON.parse(localStorage.getItem('saved-whiteboards') || '[]');
+        let activeInput = document.getElementById('whiteboardName');
+        activeInput.focus();
 
-        // Add new board
-        savedBoards.push({
-            id: Date.now(),
-            name,
-            studentName: studentName || 'Anonymous',
-            imageData,
-            timestamp: new Date().toISOString()
+        // Input focus handling
+        document.getElementById('whiteboardName').addEventListener('focus', function () {
+            activeInput = this;
+        });
+        document.getElementById('studentName').addEventListener('focus', function () {
+            activeInput = this;
         });
 
-        // Save to localStorage
-        localStorage.setItem('saved-whiteboards', JSON.stringify(savedBoards));
+        // Keyboard button clicks
+        document.querySelectorAll('.key-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent default browser actions
+                const key = btn.textContent;
+                if (key === 'Space') {
+                    activeInput.value += ' ';
+                } else if (key === '⌫') {
+                    activeInput.value = activeInput.value.slice(0, -1);
+                } else {
+                    activeInput.value += key;
+                }
+                activeInput.focus();
+            });
+        });
 
-        alert(`✅ "${name}" saved successfully!`);
+        // Close and Cancel buttons
+        document.getElementById('keyboardClose').addEventListener('click', closeKeyboardDialog);
+        document.getElementById('keyboardCancel').addEventListener('click', closeKeyboardDialog);
+
+        // Save button
+        document.getElementById('keyboardSave').addEventListener('click', () => {
+            const name = document.getElementById('whiteboardName').value.trim() || 'My Drawing';
+            const studentName = document.getElementById('studentName').value.trim() || 'Anonymous';
+
+            // Convert canvas to image
+            const imageData = canvas.toDataURL('image/png');
+
+            // Get existing saved boards
+            const savedBoards = JSON.parse(localStorage.getItem('saved-whiteboards') || '[]');
+
+            // Add new board
+            savedBoards.push({
+                id: Date.now(),
+                name,
+                studentName,
+                imageData,
+                timestamp: new Date().toISOString()
+            });
+
+            // Save to localStorage
+            localStorage.setItem('saved-whiteboards', JSON.stringify(savedBoards));
+
+            closeKeyboardDialog();
+
+            // Show success message
+            showSuccessMessage(`✅ "${name}" saved successfully!`);
+        });
+    }
+
+    function closeKeyboardDialog() {
+        const overlay = document.getElementById('keyboardOverlay');
+        if (overlay) overlay.remove();
+    }
+
+    function showSuccessMessage(message) {
+        const msgHTML = `
+            <div class="success-toast" id="successToast">
+                ${message}
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', msgHTML);
+        setTimeout(() => {
+            const toast = document.getElementById('successToast');
+            if (toast) toast.remove();
+        }, 3000);
     }
 
     function showGallery() {
