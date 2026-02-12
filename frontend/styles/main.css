@@ -455,83 +455,133 @@ button {
 }
 
 /* ============================================
-   SCREENSAVER - Smooth transitions + Ken Burns
+   ATTRACT MODE - Enhanced screensaver with Ken Burns
    ============================================ */
-.screensaver {
+.attract-mode {
   position: fixed;
   inset: 0;
   background: #000;
   z-index: 9999;
   overflow: hidden;
+  cursor: pointer;
+}
+
+/* Solid black background when showing apps */
+.attract-mode.showing-apps {
+  background: #09090b;
 }
 
 /* YouTube-style blurred background layer */
-.screensaver__blur {
+.attract-mode__blur {
   position: absolute;
   inset: -20px;
-  /* Extend beyond edges to hide blur artifacts */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   opacity: 0;
   filter: blur(30px) brightness(0.4);
   transform: scale(1.1);
-  transition: opacity 1.5s ease-in-out;
+  transition: opacity 2s ease-in-out;
   z-index: 1;
 }
 
-.screensaver__blur.active {
+.attract-mode__blur.active {
   opacity: 1;
+  animation: kenBurnsBlur 12s ease-in-out forwards;
 }
 
-/* Main image layer (on top of blur) */
-.screensaver__img {
+/* Main image layer with Ken Burns effect */
+.attract-mode__img {
   position: absolute;
   inset: 0;
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
   opacity: 0;
-  transition: opacity 1.5s ease-in-out;
+  transition: opacity 2s ease-in-out;
   z-index: 2;
 }
 
-.screensaver__img.active {
+.attract-mode__img.active {
   opacity: 1;
+  animation: kenBurns 12s ease-in-out forwards;
 }
 
-/* Ken Burns effect - DISABLED to prevent text cutoff */
-/* .screensaver__img.animate { animation: kenBurns 10s ease-in-out forwards; } */
-
+/* Ken Burns zoom and pan effect */
 @keyframes kenBurns {
   0% {
     transform: scale(1) translate(0, 0);
   }
 
   100% {
-    transform: scale(1.1) translate(-2%, -1%);
+    transform: scale(1.08) translate(-1.5%, -1%);
   }
 }
 
-/* Alternate animation direction - DISABLED to prevent text cutoff */
-/* .screensaver__img.animate-alt { animation: kenBurnsAlt 10s ease-in-out forwards; } */
-
-@keyframes kenBurnsAlt {
+/* Alternate Ken Burns for blur layer */
+@keyframes kenBurnsBlur {
   0% {
-    transform: scale(1.05) translate(-1%, 1%);
+    transform: scale(1.1) translate(0, 0);
   }
 
   100% {
-    transform: scale(1) translate(1%, -1%);
+    transform: scale(1.18) translate(-1.5%, -1%);
   }
 }
 
-.screensaver__hint {
+/* Persistent Interactive Kiosk Banner - Hidden by default */
+.attract-mode__banner {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none; /* Hidden by default, shown when apps are active */
+  align-items: center;
+  gap: 16px;
+  padding: 20px 48px;
+  background: rgba(59, 130, 246, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 100px;
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  z-index: 10;
+  box-shadow: 0 10px 40px rgba(59, 130, 246, 0.5);
+  animation: bannerFloat 3s ease-in-out infinite;
+}
+
+.attract-mode__banner-icon {
+  font-size: 2.5rem;
+  animation: iconSpin 4s linear infinite;
+}
+
+@keyframes bannerFloat {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-8px);
+  }
+}
+
+@keyframes iconSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Simple hint for image-only screensaver */
+.attract-mode__simple-hint {
   position: absolute;
   bottom: 80px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 32px 60px;
+  padding: 24px 50px;
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(10px);
   border-radius: 100px;
@@ -540,17 +590,220 @@ button {
   color: white;
   animation: pulse 2s ease-in-out infinite;
   z-index: 10;
+  display: block;
 }
 
-@keyframes pulse {
+/* Rotating App Previews - Hidden by default */
+.attract-mode__app-preview {
+  position: absolute;
+  inset: 0;
+  display: none; /* Hidden by default, shown after 10 mins */
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  pointer-events: none;
+}
 
-  0%,
-  100% {
-    opacity: 0.7;
+.attract-mode__app-card {
+  position: absolute;
+  width: 95%;
+  max-width: 1200px;
+  padding: 120px 140px;
+  background: linear-gradient(135deg, #09090b 0%, #18181b 100%);
+  border-radius: 50px;
+  border: 4px solid rgba(59, 130, 246, 0.6);
+  box-shadow:
+    0 0 100px rgba(59, 130, 246, 0.5),
+    0 40px 120px rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+  cursor: pointer;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 50px;
+  text-align: center;
+}
+
+.attract-mode__app-card.active {
+  opacity: 1;
+  transform: scale(1);
+  animation: cardFloat 4s ease-in-out infinite;
+}
+
+.attract-mode__app-card:hover {
+  border-color: rgba(59, 130, 246, 0.9);
+  box-shadow:
+    0 0 100px rgba(59, 130, 246, 0.6),
+    0 35px 120px rgba(0, 0, 0, 0.7);
+  transform: scale(1.02);
+}
+
+@keyframes cardFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
   }
-
   50% {
+    transform: translateY(-10px) scale(1);
+  }
+}
+
+.attract-mode__app-icon {
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 130, 246, 0.2);
+  border-radius: 40px;
+  flex-shrink: 0;
+}
+
+.attract-mode__app-icon svg {
+  width: 140px;
+  height: 140px;
+  color: #3b82f6;
+}
+
+.attract-mode__app-icon--green {
+  background: rgba(34, 197, 94, 0.2);
+}
+
+.attract-mode__app-icon--green svg {
+  color: #22c55e;
+}
+
+.attract-mode__app-icon--purple {
+  background: rgba(168, 85, 247, 0.2);
+}
+
+.attract-mode__app-icon--purple svg {
+  color: #a855f7;
+}
+
+.attract-mode__app-icon--orange {
+  background: rgba(249, 115, 22, 0.2);
+}
+
+.attract-mode__app-icon--orange svg {
+  color: #f97316;
+}
+
+.attract-mode__app-icon--yellow {
+  background: rgba(234, 179, 8, 0.2);
+}
+
+.attract-mode__app-icon--yellow svg {
+  color: #eab308;
+}
+
+.attract-mode__app-title {
+  font-size: 6.5rem;
+  font-weight: 900;
+  color: white;
+  margin: 0;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
+  line-height: 1.1;
+}
+
+.attract-mode__app-desc {
+  font-size: 3.5rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+}
+
+.attract-mode__app-tap-hint {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: rgba(59, 130, 246, 0.9);
+  margin-top: 20px;
+  padding: 20px 50px;
+  background: rgba(59, 130, 246, 0.15);
+  border-radius: 100px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Large CTA Overlay - Positioned at bottom, hidden by default */
+.attract-mode__cta {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+  text-align: center;
+  display: none; /* Hidden by default, shown when apps are active */
+}
+
+.attract-mode__cta-inner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 60px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(20px);
+  border-radius: 100px;
+  box-shadow:
+    0 0 40px rgba(59, 130, 246, 0.4),
+    0 10px 60px rgba(0, 0, 0, 0.6);
+  animation: breathe 2.5s ease-in-out infinite;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.attract-mode__cta-icon {
+  width: 40px;
+  height: 40px;
+  color: white;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.attract-mode__cta-text {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+
+.attract-mode__cta-subtitle {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Breathing animation for CTA */
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 60px rgba(59, 130, 246, 0.6),
+      0 20px 80px rgba(0, 0, 0, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow:
+      0 0 80px rgba(59, 130, 246, 0.8),
+      0 25px 100px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Pulse animation for icon */
+@keyframes pulse {
+  0%, 100% {
     opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
   }
 }
 
@@ -2613,4 +2866,214 @@ button {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+/* ============================================
+   ATTRACT MODE - RESPONSIVE STYLES
+   ============================================ */
+
+/* Mobile phones (portrait) - max-width: 768px */
+@media (max-width: 768px) {
+  .attract-mode__banner {
+    top: 20px;
+    padding: 16px 32px;
+    font-size: 1.25rem;
+    gap: 12px;
+  }
+
+  .attract-mode__banner-icon {
+    font-size: 1.5rem;
+  }
+
+  .attract-mode__app-card {
+    padding: 60px 70px;
+    max-width: 95%;
+    gap: 32px;
+  }
+
+  .attract-mode__app-icon {
+    width: 140px;
+    height: 140px;
+  }
+
+  .attract-mode__app-icon svg {
+    width: 90px;
+    height: 90px;
+  }
+
+  .attract-mode__app-title {
+    font-size: 4rem;
+  }
+
+  .attract-mode__app-desc {
+    font-size: 2.25rem;
+  }
+
+  .attract-mode__app-tap-hint {
+    font-size: 1.75rem;
+    padding: 16px 36px;
+  }
+
+  .attract-mode__cta {
+    bottom: 60px;
+  }
+
+  .attract-mode__cta-inner {
+    padding: 24px 40px;
+    border-radius: 80px;
+    gap: 16px;
+  }
+
+  .attract-mode__cta-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .attract-mode__cta-text {
+    font-size: 1.75rem;
+  }
+
+  .attract-mode__cta-subtitle {
+    font-size: 1.125rem;
+  }
+
+  .attract-mode__simple-hint {
+    bottom: 50px;
+    padding: 20px 40px;
+    font-size: 1.5rem;
+  }
+}
+
+/* Small mobile phones - max-width: 480px */
+@media (max-width: 480px) {
+  .attract-mode__banner {
+    padding: 12px 24px;
+    font-size: 1rem;
+    gap: 8px;
+  }
+
+  .attract-mode__banner-icon {
+    font-size: 1.25rem;
+  }
+
+  .attract-mode__app-card {
+    padding: 50px 60px;
+    gap: 28px;
+  }
+
+  .attract-mode__app-icon {
+    width: 120px;
+    height: 120px;
+  }
+
+  .attract-mode__app-icon svg {
+    width: 75px;
+    height: 75px;
+  }
+
+  .attract-mode__app-title {
+    font-size: 3rem;
+  }
+
+  .attract-mode__app-desc {
+    font-size: 2rem;
+  }
+
+  .attract-mode__app-tap-hint {
+    font-size: 1.5rem;
+    padding: 14px 32px;
+  }
+
+  .attract-mode__cta {
+    bottom: 40px;
+  }
+
+  .attract-mode__cta-inner {
+    padding: 20px 32px;
+    gap: 12px;
+  }
+
+  .attract-mode__cta-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .attract-mode__cta-text {
+    font-size: 1.5rem;
+  }
+
+  .attract-mode__cta-subtitle {
+    font-size: 1rem;
+  }
+
+  .attract-mode__simple-hint {
+    bottom: 40px;
+    padding: 16px 32px;
+    font-size: 1.25rem;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (orientation: landscape) and (max-height: 600px) {
+  .attract-mode__banner {
+    top: 16px;
+    padding: 12px 28px;
+    font-size: 1.125rem;
+  }
+
+  .attract-mode__app-card {
+    padding: 70px 90px;
+    gap: 36px;
+    max-width: 85%;
+  }
+
+  .attract-mode__app-icon {
+    width: 160px;
+    height: 160px;
+  }
+
+  .attract-mode__app-icon svg {
+    width: 100px;
+    height: 100px;
+  }
+
+  .attract-mode__app-title {
+    font-size: 4.5rem;
+  }
+
+  .attract-mode__app-desc {
+    font-size: 2.75rem;
+  }
+
+  .attract-mode__app-tap-hint {
+    font-size: 2rem;
+  }
+
+  .attract-mode__cta {
+    bottom: 50px;
+  }
+
+  .attract-mode__cta-inner {
+    padding: 24px 40px;
+    gap: 16px;
+  }
+
+  .attract-mode__cta-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .attract-mode__cta-text {
+    font-size: 2rem;
+  }
+
+  .attract-mode__cta-subtitle {
+    font-size: 1.25rem;
+  }
+
+  .attract-mode__simple-hint {
+    bottom: 40px;
+    padding: 18px 36px;
+    font-size: 1.5rem;
+  }
 }

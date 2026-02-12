@@ -1,4 +1,7 @@
 // Local storage utility for scores, statistics, and achievements
+// Now with robust multi-layer backup system!
+
+import robustStorage from './robustStorage.js';
 
 const STORAGE_KEYS = {
   LEADERBOARD: 'stem-kiosk-leaderboard',
@@ -7,72 +10,83 @@ const STORAGE_KEYS = {
 };
 
 // Initialize storage structure
-function initStorage() {
-  if (!localStorage.getItem(STORAGE_KEYS.LEADERBOARD)) {
-    localStorage.setItem(STORAGE_KEYS.LEADERBOARD, JSON.stringify({}));
+async function initStorage() {
+  const leaderboard = await robustStorage.load(STORAGE_KEYS.LEADERBOARD);
+  if (!leaderboard) {
+    await robustStorage.save(STORAGE_KEYS.LEADERBOARD, {});
   }
-  if (!localStorage.getItem(STORAGE_KEYS.STATISTICS)) {
-    localStorage.setItem(STORAGE_KEYS.STATISTICS, JSON.stringify({
+
+  const statistics = await robustStorage.load(STORAGE_KEYS.STATISTICS);
+  if (!statistics) {
+    await robustStorage.save(STORAGE_KEYS.STATISTICS, {
       totalPlayTime: 0,
       gamesPlayed: 0,
       lastPlayed: null,
       gameStats: {}
-    }));
+    });
   }
-  if (!localStorage.getItem(STORAGE_KEYS.ACHIEVEMENTS)) {
-    localStorage.setItem(STORAGE_KEYS.ACHIEVEMENTS, JSON.stringify([]));
+
+  const achievements = await robustStorage.load(STORAGE_KEYS.ACHIEVEMENTS);
+  if (!achievements) {
+    await robustStorage.save(STORAGE_KEYS.ACHIEVEMENTS, []);
   }
 }
 
 // Leaderboard functions
-export function saveScore(gameId, score, playerName = 'Player') {
-  initStorage();
-  const leaderboard = JSON.parse(localStorage.getItem(STORAGE_KEYS.LEADERBOARD));
-  
+export async function saveScore(gameId, score, playerName = 'Player') {
+  await initStorage();
+  const leaderboard = await robustStorage.load(STORAGE_KEYS.LEADERBOARD) || {};
+
   if (!leaderboard[gameId]) {
     leaderboard[gameId] = [];
   }
-  
+
   const entry = {
     score,
     playerName,
     date: new Date().toISOString(),
     timestamp: Date.now()
   };
-  
+
   leaderboard[gameId].push(entry);
   // Keep top 50 scores per game
   leaderboard[gameId].sort((a, b) => b.score - a.score);
   leaderboard[gameId] = leaderboard[gameId].slice(0, 50);
-  
-  localStorage.setItem(STORAGE_KEYS.LEADERBOARD, JSON.stringify(leaderboard));
+
+  await robustStorage.save(STORAGE_KEYS.LEADERBOARD, leaderboard);
+  console.log(`✅ Score saved: ${gameId} - ${score} points`);
   return entry;
 }
 
-export function getLeaderboard(gameId) {
-  initStorage();
-  const leaderboard = JSON.parse(localStorage.getItem(STORAGE_KEYS.LEADERBOARD));
+export async function getLeaderboard(gameId) {
+  await initStorage();
+  const leaderboard = await robustStorage.load(STORAGE_KEYS.LEADERBOARD) || {};
   return leaderboard[gameId] || [];
 }
 
-export function getAllLeaderboards() {
-  initStorage();
-  return JSON.parse(localStorage.getItem(STORAGE_KEYS.LEADERBOARD));
+export async function getAllLeaderboards() {
+  await initStorage();
+  return await robustStorage.load(STORAGE_KEYS.LEADERBOARD) || {};
 }
 
-export function getBestScore(gameId) {
-  const scores = getLeaderboard(gameId);
+export async function getBestScore(gameId) {
+  const scores = await getLeaderboard(gameId);
   return scores.length > 0 ? scores[0].score : 0;
 }
 
 // Statistics functions
-export function updateStatistics(gameId, stats) {
-  initStorage();
-  const statistics = JSON.parse(localStorage.getItem(STORAGE_KEYS.STATISTICS));
-  
+export async function updateStatistics(gameId, stats) {
+  await initStorage();
+  const statistics = await robustStorage.load(STORAGE_KEYS.STATISTICS) || {
+    totalPlayTime: 0,
+    gamesPlayed: 0,
+    lastPlayed: null,
+    gameStats: {}
+  };
+
   statistics.gamesPlayed += 1;
   statistics.lastPlayed = new Date().toISOString();
-  
+
   if (!statistics.gameStats[gameId]) {
     statistics.gameStats[gameId] = {
       gamesPlayed: 0,
@@ -84,37 +98,43 @@ export function updateStatistics(gameId, stats) {
       draws: 0
     };
   }
-  
+
   const gameStats = statistics.gameStats[gameId];
   gameStats.gamesPlayed += 1;
-  
+
   if (stats.playTime) {
     statistics.totalPlayTime += stats.playTime;
     gameStats.totalPlayTime += stats.playTime;
   }
-  
+
   if (stats.score !== undefined) {
     gameStats.totalScore += stats.score;
     if (stats.score > gameStats.bestScore) {
       gameStats.bestScore = stats.score;
     }
   }
-  
+
   if (stats.result === 'win') gameStats.wins += 1;
   if (stats.result === 'loss') gameStats.losses += 1;
   if (stats.result === 'draw') gameStats.draws += 1;
-  
-  localStorage.setItem(STORAGE_KEYS.STATISTICS, JSON.stringify(statistics));
+
+  await robustStorage.save(STORAGE_KEYS.STATISTICS, statistics);
+  console.log(`📊 Statistics updated: ${gameId}`);
   return statistics;
 }
 
-export function getStatistics() {
-  initStorage();
-  return JSON.parse(localStorage.getItem(STORAGE_KEYS.STATISTICS));
+export async function getStatistics() {
+  await initStorage();
+  return await robustStorage.load(STORAGE_KEYS.STATISTICS) || {
+    totalPlayTime: 0,
+    gamesPlayed: 0,
+    lastPlayed: null,
+    gameStats: {}
+  };
 }
 
-export function getGameStatistics(gameId) {
-  const stats = getStatistics();
+export async function getGameStatistics(gameId) {
+  const stats = await getStatistics();
   return stats.gameStats[gameId] || {
     gamesPlayed: 0,
     totalPlayTime: 0,
@@ -127,10 +147,10 @@ export function getGameStatistics(gameId) {
 }
 
 // Achievement functions
-export function unlockAchievement(achievementId, name, description) {
-  initStorage();
-  const achievements = JSON.parse(localStorage.getItem(STORAGE_KEYS.ACHIEVEMENTS));
-  
+export async function unlockAchievement(achievementId, name, description) {
+  await initStorage();
+  const achievements = await robustStorage.load(STORAGE_KEYS.ACHIEVEMENTS) || [];
+
   const exists = achievements.find(a => a.id === achievementId);
   if (!exists) {
     achievements.push({
@@ -140,19 +160,20 @@ export function unlockAchievement(achievementId, name, description) {
       unlockedAt: new Date().toISOString(),
       timestamp: Date.now()
     });
-    localStorage.setItem(STORAGE_KEYS.ACHIEVEMENTS, JSON.stringify(achievements));
+    await robustStorage.save(STORAGE_KEYS.ACHIEVEMENTS, achievements);
+    console.log(`🏆 Achievement unlocked: ${name}`);
     return true;
   }
   return false;
 }
 
-export function getAchievements() {
-  initStorage();
-  return JSON.parse(localStorage.getItem(STORAGE_KEYS.ACHIEVEMENTS));
+export async function getAchievements() {
+  await initStorage();
+  return await robustStorage.load(STORAGE_KEYS.ACHIEVEMENTS) || [];
 }
 
-export function hasAchievement(achievementId) {
-  const achievements = getAchievements();
+export async function hasAchievement(achievementId) {
+  const achievements = await getAchievements();
   return achievements.some(a => a.id === achievementId);
 }
 

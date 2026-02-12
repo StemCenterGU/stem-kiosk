@@ -39,6 +39,8 @@ class KioskRequestHandler(http.server.SimpleHTTPRequestHandler):
         parsed = urlparse(self.path)
         if parsed.path == "/__screensaver":
             return self.handle_screensaver_request()
+        if parsed.path == "/__restore":
+            return self.handle_restore_request()
         return super().do_GET()
 
     def do_OPTIONS(self):  # noqa: N802
@@ -53,6 +55,11 @@ class KioskRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):  # noqa: N802
         parsed = urlparse(self.path)
+
+        # Handle backup endpoint
+        if parsed.path == "/__backup":
+            return self.handle_backup_request()
+
         if parsed.path != "/__control":
             return super().do_POST()
 
@@ -97,20 +104,71 @@ class KioskRequestHandler(http.server.SimpleHTTPRequestHandler):
         # Look in the specific 'screensaver' subfolder first
         screensaver_dir = BASE_DIR / "images" / "screensaver"
         images_dir = screensaver_dir if screensaver_dir.exists() else (BASE_DIR / "images")
-        
+
         if not images_dir.exists():
             return self.send_json({"images": []})
-        
+
         extensions = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
         files_list = []
-        
+
         prefix = "images/screensaver/" if images_dir == screensaver_dir else "images/"
-        
+
         for name in sorted(os.listdir(images_dir)):
             if Path(name).suffix.lower() in extensions:
                 files_list.append(f"{prefix}{name}")
-        
+
         return self.send_json({"images": files_list})
+
+    def handle_backup_request(self):
+        """Save backup data from the client"""
+        try:
+            length = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(length) if length else b""
+            backup_data = json.loads(body.decode("utf-8"))
+
+            # Save backup to file
+            backup_dir = BASE_DIR.parent / "backups"
+            backup_dir.mkdir(exist_ok=True)
+
+            # Save latest backup
+            backup_file = backup_dir / "latest_backup.json"
+            with open(backup_file, 'w') as f:
+                json.dump(backup_data, f, indent=2)
+
+            # Also save timestamped backup (keep last 10)
+            timestamp = backup_data.get('timestamp', 'unknown')
+            timestamped_file = backup_dir / f"backup_{timestamp.replace(':', '-').replace('.', '-')}.json"
+            with open(timestamped_file, 'w') as f:
+                json.dump(backup_data, f, indent=2)
+
+            # Clean up old backups (keep last 10)
+            backups = sorted(backup_dir.glob("backup_*.json"))
+            if len(backups) > 10:
+                for old_backup in backups[:-10]:
+                    old_backup.unlink()
+
+            print(f"💾 Backup saved: {backup_file}")
+            return self.send_json({"status": "ok", "message": "Backup saved successfully"})
+        except Exception as e:
+            print(f"❌ Backup failed: {e}")
+            return self.send_json({"status": "error", "message": str(e)}, status=500)
+
+    def handle_restore_request(self):
+        """Restore backup data to the client"""
+        try:
+            backup_file = BASE_DIR.parent / "backups" / "latest_backup.json"
+
+            if not backup_file.exists():
+                return self.send_json({"status": "error", "message": "No backup found"}, status=404)
+
+            with open(backup_file, 'r') as f:
+                backup_data = json.load(f)
+
+            print(f"☁️ Backup restored from: {backup_file}")
+            return self.send_json(backup_data)
+        except Exception as e:
+            print(f"❌ Restore failed: {e}")
+            return self.send_json({"status": "error", "message": str(e)}, status=500)
 
 
 def terminate_chromium():

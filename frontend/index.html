@@ -237,15 +237,40 @@
 
   </main>
 
-  <!-- Screensaver with dual layers for crossfade + blurred backgrounds -->
-  <div class="screensaver hidden" id="screensaver">
+  <!-- Attract Mode (Enhanced Screensaver) -->
+  <div class="attract-mode hidden" id="screensaver">
     <!-- Layer 1 -->
-    <div class="screensaver__blur" id="screensaverBlur1"></div>
-    <div class="screensaver__img" id="screensaverLayer1"></div>
+    <div class="attract-mode__blur" id="screensaverBlur1"></div>
+    <div class="attract-mode__img" id="screensaverLayer1"></div>
     <!-- Layer 2 -->
-    <div class="screensaver__blur" id="screensaverBlur2"></div>
-    <div class="screensaver__img" id="screensaverLayer2"></div>
-    <div class="screensaver__hint">Touch anywhere to start</div>
+    <div class="attract-mode__blur" id="screensaverBlur2"></div>
+    <div class="attract-mode__img" id="screensaverLayer2"></div>
+
+    <!-- Simple hint when showing only images -->
+    <div class="attract-mode__simple-hint" id="simpleHint">Touch anywhere to continue</div>
+
+    <!-- Persistent Interactive Kiosk Banner (shown with apps) -->
+    <div class="attract-mode__banner">
+      <span class="attract-mode__banner-icon">✨</span>
+      <span class="attract-mode__banner-text">INTERACTIVE KIOSK</span>
+      <span class="attract-mode__banner-icon">✨</span>
+    </div>
+
+    <!-- Rotating App Previews -->
+    <div class="attract-mode__app-preview" id="appPreview">
+      <!-- App cards will be dynamically inserted here -->
+    </div>
+
+    <!-- Large CTA Overlay (shown with apps) -->
+    <div class="attract-mode__cta">
+      <div class="attract-mode__cta-inner">
+        <svg class="attract-mode__cta-icon" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+        <h2 class="attract-mode__cta-text">Touch to Start</h2>
+        <p class="attract-mode__cta-subtitle">Tap any app to begin</p>
+      </div>
+    </div>
   </div>
 
   <!-- Exit Dialog -->

@@ -139,17 +139,24 @@ const exitOverlay = document.getElementById("exitOverlay");
 const exitCancel = document.getElementById("exitCancel");
 
 // Screensaver config
-const SCREENSAVER_DELAY_MS = 3 * 60 * 1000;
-const SCREENSAVER_ADVANCE_MS = 8000;
+const SCREENSAVER_DELAY_MS = 1 * 60 * 1000; // 1 minute to activate screensaver (for testing)
+const SCREENSAVER_ADVANCE_MS = 8000; // 8 seconds between background images
+const MODE_SWITCH_DELAY_MS = 1 * 60 * 1000; // 1 minute before switching modes (for testing)
+const APP_PREVIEW_ADVANCE_MS = 5000; // 5 seconds between app cards
 
 const screensaverState = {
   timerId: null,
   intervalId: null,
+  appIntervalId: null,
+  modeSwitchTimerId: null,
   active: false,
+  currentMode: 'images', // 'images' or 'apps'
   index: 0,
+  appIndex: 0,
   images: [],
   loading: false,
   currentLayer: 1, // Toggle between 1 and 2 for crossfade
+  appCards: [],
 };
 
 // Activity cards
@@ -317,13 +324,190 @@ function setupScreensaver() {
   events.forEach((evt) => {
     document.addEventListener(evt, handleUserActivity, { passive: true });
   });
-  screensaverEl.addEventListener("click", handleUserActivity);
+
+  // Click on screensaver background returns to home
+  screensaverEl.addEventListener("click", (e) => {
+    // Only handle if clicking on the screensaver itself, not on app cards
+    if (e.target === screensaverEl ||
+        e.target.classList.contains("attract-mode__blur") ||
+        e.target.classList.contains("attract-mode__img")) {
+      handleUserActivity();
+    }
+  });
+
   resetScreensaverTimer();
 }
 
 function resetScreensaverTimer() {
   if (screensaverState.timerId) clearTimeout(screensaverState.timerId);
   screensaverState.timerId = setTimeout(activateScreensaver, SCREENSAVER_DELAY_MS);
+}
+
+// Create app preview cards
+function createAppPreviewCards() {
+  const appPreviewEl = document.getElementById("appPreview");
+  if (!appPreviewEl) return;
+
+  // Clear existing cards
+  appPreviewEl.innerHTML = "";
+  screensaverState.appCards = [];
+
+  activities.forEach((activity, idx) => {
+    const card = document.createElement("div");
+    card.className = "attract-mode__app-card";
+    card.dataset.activityId = activity.id;
+
+    // Determine icon color class
+    let iconColorClass = "";
+    if (idx === 1 || idx === 3) iconColorClass = "attract-mode__app-icon--green";
+    else if (idx === 2) iconColorClass = "attract-mode__app-icon--orange";
+    else if (idx === 4 || idx === 5) iconColorClass = "attract-mode__app-icon--purple";
+    else if (idx === 6) iconColorClass = "attract-mode__app-icon--yellow";
+
+    // Get the activity card from home view to extract icon and description
+    const homeCard = document.querySelector(`[data-activity-id="${activity.id}"]`);
+    let iconSvg = "";
+    let description = "";
+    if (homeCard) {
+      const iconEl = homeCard.querySelector(".activity-card__icon svg");
+      iconSvg = iconEl ? iconEl.outerHTML : "";
+      const descEl = homeCard.querySelector(".activity-card__desc");
+      description = descEl ? descEl.textContent : "";
+    }
+
+    card.innerHTML = `
+      <div class="attract-mode__app-icon ${iconColorClass}">
+        ${iconSvg}
+      </div>
+      <h3 class="attract-mode__app-title">${activity.title}</h3>
+      <p class="attract-mode__app-desc">${description}</p>
+      <div class="attract-mode__app-tap-hint">👆 Tap to play</div>
+    `;
+
+    // Add click handler to launch the app
+    card.addEventListener("click", (e) => {
+      e.stopPropagation();
+      deactivateScreensaver();
+      openActivity(activity.id);
+    });
+
+    appPreviewEl.appendChild(card);
+    screensaverState.appCards.push(card);
+  });
+}
+
+// Update app preview rotation
+function updateAppPreview() {
+  if (!screensaverState.appCards.length) return;
+
+  // Hide all cards
+  screensaverState.appCards.forEach((card) => {
+    card.classList.remove("active");
+  });
+
+  // Show current card
+  const currentCard = screensaverState.appCards[screensaverState.appIndex];
+  if (currentCard) {
+    currentCard.classList.add("active");
+  }
+}
+
+// Switch to app preview mode
+function switchToAppMode() {
+  if (!screensaverState.active || screensaverState.currentMode === 'apps') return;
+
+  screensaverState.currentMode = 'apps';
+  screensaverState.appIndex = 0;
+
+  // Stop background image rotation
+  if (screensaverState.intervalId) {
+    clearInterval(screensaverState.intervalId);
+    screensaverState.intervalId = null;
+  }
+
+  // Create app preview cards if not already created
+  if (!screensaverState.appCards.length) {
+    createAppPreviewCards();
+  }
+
+  // Add class for solid background
+  screensaverEl.classList.add("showing-apps");
+
+  // Hide screensaver layers and simple hint
+  screensaverLayer1.classList.remove("active");
+  screensaverLayer2.classList.remove("active");
+  screensaverBlur1.classList.remove("active");
+  screensaverBlur2.classList.remove("active");
+
+  const simpleHintEl = document.getElementById("simpleHint");
+  const appPreviewEl = document.getElementById("appPreview");
+  const ctaEl = document.querySelector(".attract-mode__cta");
+  const bannerEl = document.querySelector(".attract-mode__banner");
+
+  if (simpleHintEl) simpleHintEl.style.display = "none";
+  if (appPreviewEl) appPreviewEl.style.display = "flex";
+  if (ctaEl) ctaEl.style.display = "block";
+  if (bannerEl) bannerEl.style.display = "flex";
+
+  updateAppPreview();
+
+  // App preview rotation (every 5 seconds)
+  screensaverState.appIntervalId = setInterval(() => {
+    screensaverState.appIndex = (screensaverState.appIndex + 1) % screensaverState.appCards.length;
+    updateAppPreview();
+  }, APP_PREVIEW_ADVANCE_MS);
+
+  // After 10 minutes, switch back to screensaver
+  screensaverState.modeSwitchTimerId = setTimeout(() => {
+    switchToImageMode();
+  }, MODE_SWITCH_DELAY_MS);
+}
+
+// Switch to screensaver image mode
+function switchToImageMode() {
+  if (!screensaverState.active || screensaverState.currentMode === 'images') return;
+
+  screensaverState.currentMode = 'images';
+  screensaverState.index = 0;
+
+  // Stop app rotation
+  if (screensaverState.appIntervalId) {
+    clearInterval(screensaverState.appIntervalId);
+    screensaverState.appIntervalId = null;
+  }
+
+  // Remove class for solid background
+  screensaverEl.classList.remove("showing-apps");
+
+  // Hide app preview, CTA, and banner
+  const simpleHintEl = document.getElementById("simpleHint");
+  const appPreviewEl = document.getElementById("appPreview");
+  const ctaEl = document.querySelector(".attract-mode__cta");
+  const bannerEl = document.querySelector(".attract-mode__banner");
+
+  if (appPreviewEl) appPreviewEl.style.display = "none";
+  if (ctaEl) ctaEl.style.display = "none";
+  if (bannerEl) bannerEl.style.display = "none";
+  if (simpleHintEl) simpleHintEl.style.display = "block";
+
+  // Hide all app cards
+  screensaverState.appCards.forEach((card) => {
+    card.classList.remove("active");
+  });
+
+  // Show screensaver images
+  updateScreensaverImage();
+
+  // Background image rotation (every 8 seconds)
+  screensaverState.intervalId = setInterval(() => {
+    screensaverState.index = (screensaverState.index + 1) % screensaverState.images.length;
+    updateScreensaverImage();
+  }, SCREENSAVER_ADVANCE_MS);
+
+  // After 10 minutes, switch to app mode
+  screensaverState.modeSwitchTimerId = setTimeout(() => {
+    switchToAppMode();
+  }, MODE_SWITCH_DELAY_MS);
 }
 
 async function activateScreensaver() {
@@ -335,23 +519,61 @@ async function activateScreensaver() {
   }
   closeActivity();
   screensaverState.active = true;
+  screensaverState.currentMode = 'images';
   screensaverState.index = 0;
+
+  // Show simple hint, hide app previews, CTA, and banner initially
+  const simpleHintEl = document.getElementById("simpleHint");
+  const appPreviewEl = document.getElementById("appPreview");
+  const ctaEl = document.querySelector(".attract-mode__cta");
+  const bannerEl = document.querySelector(".attract-mode__banner");
+
+  if (simpleHintEl) simpleHintEl.style.display = "block";
+  if (appPreviewEl) appPreviewEl.style.display = "none";
+  if (ctaEl) ctaEl.style.display = "none";
+  if (bannerEl) bannerEl.style.display = "none";
+
   updateScreensaverImage();
   screensaverEl.classList.remove("hidden");
+
+  // Background image rotation (every 8 seconds)
   screensaverState.intervalId = setInterval(() => {
     screensaverState.index = (screensaverState.index + 1) % screensaverState.images.length;
     updateScreensaverImage();
   }, SCREENSAVER_ADVANCE_MS);
+
+  // After 10 minutes, switch to app mode (starts the cycle)
+  screensaverState.modeSwitchTimerId = setTimeout(() => {
+    switchToAppMode();
+  }, MODE_SWITCH_DELAY_MS);
 }
 
 function deactivateScreensaver() {
   if (!screensaverState.active) return;
   screensaverState.active = false;
+  screensaverState.currentMode = 'images';
+
+  // Play wake-up sound feedback
+  audioManager.playTap();
+
+  // Clear all timers
   if (screensaverState.intervalId) {
     clearInterval(screensaverState.intervalId);
     screensaverState.intervalId = null;
   }
+
+  if (screensaverState.appIntervalId) {
+    clearInterval(screensaverState.appIntervalId);
+    screensaverState.appIntervalId = null;
+  }
+
+  if (screensaverState.modeSwitchTimerId) {
+    clearTimeout(screensaverState.modeSwitchTimerId);
+    screensaverState.modeSwitchTimerId = null;
+  }
+
   screensaverEl.classList.add("hidden");
+  screensaverEl.classList.remove("showing-apps");
 
   // Clean up all layers (main + blur)
   screensaverLayer1.classList.remove("active");
@@ -359,6 +581,22 @@ function deactivateScreensaver() {
   screensaverBlur1.classList.remove("active");
   screensaverBlur2.classList.remove("active");
   screensaverState.currentLayer = 1;
+
+  // Hide all app cards
+  screensaverState.appCards.forEach((card) => {
+    card.classList.remove("active");
+  });
+
+  // Hide app preview container and simple hint
+  const appPreviewEl = document.getElementById("appPreview");
+  const simpleHintEl = document.getElementById("simpleHint");
+  const ctaEl = document.querySelector(".attract-mode__cta");
+  const bannerEl = document.querySelector(".attract-mode__banner");
+
+  if (appPreviewEl) appPreviewEl.style.display = "none";
+  if (simpleHintEl) simpleHintEl.style.display = "none";
+  if (ctaEl) ctaEl.style.display = "none";
+  if (bannerEl) bannerEl.style.display = "none";
 }
 
 function handleUserActivity() {

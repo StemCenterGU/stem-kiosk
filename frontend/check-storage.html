@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check Storage Data</title>
+  <style>
+    body {
+      font-family: monospace;
+      padding: 20px;
+      background: #000;
+      color: #0f0;
+    }
+    h1 { color: #0ff; }
+    pre {
+      background: #111;
+      padding: 15px;
+      border-radius: 5px;
+      overflow: auto;
+      max-height: 600px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px 5px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #0f0;
+      border: none;
+      border-radius: 5px;
+      color: #000;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #0ff;
+    }
+    .warning {
+      color: #ff0;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>STEM Kiosk - Storage Data Checker</h1>
+
+  <h2>All LocalStorage Keys:</h2>
+  <pre id="allKeys"></pre>
+
+  <h2>Current Leaderboard Data:</h2>
+  <pre id="leaderboard"></pre>
+
+  <h2>Current Statistics Data:</h2>
+  <pre id="statistics"></pre>
+
+  <h2>All LocalStorage (Everything):</h2>
+  <pre id="allStorage"></pre>
+
+  <h2>Actions:</h2>
+  <button onclick="refreshData()">🔄 Refresh Data</button>
+  <button onclick="exportData()">💾 Export All Data</button>
+  <button onclick="showImportDialog()">📥 Import Data</button>
+
+  <div id="importSection" style="display: none; margin-top: 20px;">
+    <h3>Paste your exported data here:</h3>
+    <textarea id="importData" style="width: 100%; height: 200px; font-family: monospace; background: #111; color: #0f0; border: 2px solid #0f0; padding: 10px;"></textarea>
+    <br>
+    <button onclick="importStorageData()">✅ Import Data</button>
+    <button onclick="cancelImport()">❌ Cancel</button>
+  </div>
+
+  <script>
+    function getAllLocalStorage() {
+      const data = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        data[key] = localStorage.getItem(key);
+      }
+      return data;
+    }
+
+    function refreshData() {
+      // Show all keys
+      const allKeys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        allKeys.push(localStorage.key(i));
+      }
+      document.getElementById('allKeys').textContent = JSON.stringify(allKeys, null, 2);
+
+      // Show leaderboard
+      const leaderboard = localStorage.getItem('stem-kiosk-leaderboard');
+      document.getElementById('leaderboard').textContent = leaderboard ? JSON.stringify(JSON.parse(leaderboard), null, 2) : 'No data found';
+
+      // Show statistics
+      const statistics = localStorage.getItem('stem-kiosk-statistics');
+      document.getElementById('statistics').textContent = statistics ? JSON.stringify(JSON.parse(statistics), null, 2) : 'No data found';
+
+      // Show everything
+      const allStorage = getAllLocalStorage();
+      document.getElementById('allStorage').textContent = JSON.stringify(allStorage, null, 2);
+    }
+
+    function exportData() {
+      const data = getAllLocalStorage();
+      const dataStr = JSON.stringify(data, null, 2);
+
+      // Create download
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `stem-kiosk-backup-${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      alert('Data exported! Check your downloads folder.');
+    }
+
+    function showImportDialog() {
+      document.getElementById('importSection').style.display = 'block';
+    }
+
+    function cancelImport() {
+      document.getElementById('importSection').style.display = 'none';
+      document.getElementById('importData').value = '';
+    }
+
+    function importStorageData() {
+      const dataStr = document.getElementById('importData').value;
+      try {
+        const data = JSON.parse(dataStr);
+
+        // Clear existing data
+        if (confirm('This will replace ALL current data. Continue?')) {
+          localStorage.clear();
+
+          // Import all keys
+          for (const [key, value] of Object.entries(data)) {
+            localStorage.setItem(key, value);
+          }
+
+          alert('Data imported successfully!');
+          cancelImport();
+          refreshData();
+        }
+      } catch (e) {
+        alert('Error importing data: ' + e.message);
+      }
+    }
+
+    // Load data on page load
+    refreshData();
+  </script>
+</body>
+</html>
