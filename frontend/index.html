@@ -15,17 +15,14 @@
 <body>
   <main id="app" class="kiosk">
 
-    <!-- Activity Selection -->
     <section class="home" id="homeView">
 
       <header class="home__header">
         <h1 class="home__title" data-text="STEM Center Fun Kiosk">STEM Center Fun Kiosk</h1>
       </header>
 
-      <!-- Rotating Banner Slideshow -->
       <section id="homeBanner" class="home__banner"></section>
 
-      <!-- Top Navigation Sidebar -->
       <nav class="home__nav">
         <button class="nav-btn" data-page="leaderboard" id="navLeaderboard" tabindex="0">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -188,17 +185,13 @@
         </button>
       </div>
 
-      <!-- Bottom bar -->
       <footer class="bottombar">
         <button id="themeToggle" class="icon-btn" aria-label="Toggle theme">
-          <svg class="theme-icon-dark" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2">
+          <svg class="theme-icon-dark" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="5" />
-            <path
-              d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
           </svg>
-          <svg class="theme-icon-light" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2">
+          <svg class="theme-icon-light" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
           </svg>
         </button>
@@ -220,7 +213,6 @@
       </footer>
     </section>
 
-    <!-- Activity View -->
     <section class="activity-view hidden" id="activityView">
       <div class="activity-content" id="activityFrame"></div>
       <footer class="activity-footer">
@@ -237,31 +229,18 @@
 
   </main>
 
-  <!-- Attract Mode (Enhanced Screensaver) -->
   <div class="attract-mode hidden" id="screensaver">
-    <!-- Layer 1 -->
     <div class="attract-mode__blur" id="screensaverBlur1"></div>
     <div class="attract-mode__img" id="screensaverLayer1"></div>
-    <!-- Layer 2 -->
     <div class="attract-mode__blur" id="screensaverBlur2"></div>
     <div class="attract-mode__img" id="screensaverLayer2"></div>
-
-    <!-- Simple hint when showing only images -->
     <div class="attract-mode__simple-hint" id="simpleHint">Touch anywhere to continue</div>
-
-    <!-- Persistent Interactive Kiosk Banner (shown with apps) -->
     <div class="attract-mode__banner">
-      <span class="attract-mode__banner-icon">✨</span>
+      <span class="attract-mode__banner-icon">&#10024;</span>
       <span class="attract-mode__banner-text">INTERACTIVE KIOSK</span>
-      <span class="attract-mode__banner-icon">✨</span>
+      <span class="attract-mode__banner-icon">&#10024;</span>
     </div>
-
-    <!-- Rotating App Previews -->
-    <div class="attract-mode__app-preview" id="appPreview">
-      <!-- App cards will be dynamically inserted here -->
-    </div>
-
-    <!-- Large CTA Overlay (shown with apps) -->
+    <div class="attract-mode__app-preview" id="appPreview"></div>
     <div class="attract-mode__cta">
       <div class="attract-mode__cta-inner">
         <svg class="attract-mode__cta-icon" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -273,7 +252,6 @@
     </div>
   </div>
 
-  <!-- Exit Dialog -->
   <div class="dialog-overlay hidden" id="exitOverlay">
     <div class="dialog">
       <h3 class="dialog__title">Exit Kiosk</h3>
@@ -285,7 +263,7 @@
     </div>
   </div>
 
-  <script src="scripts/app.js?v=29" type="module"></script>
+  <script src="scripts/app.js?v=30" type="module"></script>
 </body>
 
 </html>

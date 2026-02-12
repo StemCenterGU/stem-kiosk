@@ -455,7 +455,7 @@ button {
 }
 
 /* ============================================
-   ATTRACT MODE - Enhanced screensaver with Ken Burns
+   ATTRACT MODE - Enhanced screensaver
    ============================================ */
 .attract-mode {
   position: fixed;
@@ -1464,6 +1464,45 @@ button {
    RESPONSIVE - LANDSCAPE
    ============================================ */
 @media (orientation: landscape) and (min-width: 900px) {
+  .home {
+    padding: 30px 50px;
+  }
+
+  .home__header {
+    margin-bottom: 20px;
+    padding: 20px 0;
+  }
+
+  .home__title {
+    font-size: 3rem;
+  }
+
+  .home__nav {
+    margin-bottom: 24px;
+  }
+
+  .home__banner {
+    height: 200px;
+    margin-block-end: 2rem;
+  }
+
+  .banner__content {
+    padding: 24px 32px;
+  }
+
+  .banner__title {
+    font-size: 2.5rem;
+  }
+
+  .banner__subtitle {
+    font-size: 1.25rem;
+  }
+
+  .banner__indicators {
+    bottom: 20px;
+    right: 20px;
+  }
+
   .activities {
     flex-direction: row;
     max-width: 1400px;
@@ -2772,6 +2811,7 @@ button {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   background: var(--surface);
   margin-block-end: 4rem;
+  flex-shrink: 0;
 }
 
 .banner__slide {
